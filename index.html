@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project</title>
+    <script src="//unpkg.com/d3@5/dist/d3.min.js"></script>
+    <script>
+      var d3v5 = window.d3;
+      window.d3 = null;
+    </script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script>
+      var d3v3 = window.d3;
+      window.d3 = null;
+    </script>
+    <script src="d3.v7.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bumbeishvili/d3-tip-for-v6@4/d3-tip.min.css">
+    <script src="//unpkg.com/topojson@3/dist/topojson.min.js"></script>
+    <script src=".//olympics/d3-geomap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script> -->
+    <script src="https://unpkg.com/d3-v6-tip@1.0.6/build/d3-v6-tip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.1/underscore-min.js"></script>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  
+  <!-- <div class="slider-section"> -->
+        <div class="slider">
+          
+        </div>
+  <!-- </div> -->
+
+  
+  <div class="top-section">
+    
+    <div class="d3-geomap" id="geomap">
+
+    </div>
+      
+
+    <div id="barchart">
+    
+    </div> 
+  
+  </div>
+
+  <div class="bottom-section">
+
+    <div class="pcp">
+
+      
+    </div>
+     
+  </div>
+
+    <!-- <nav>
+        <ul>
+          <li class="dropdown">
+              <button class="dropbtn" id="dropbtn">Screeplot</button>
+          </li>
+          <li class="dropdown1">
+              <button class="dropbtn1" id="dropbtn1">Scatterplot Matrix</button> 
+          </li>
+          <li class="dropdown2">
+            <button class="dropbtn2" id="dropbtn2">Biplot</button> 
+          </li>
+          <li class="dropdown3">
+            <button class="dropbtn3" id="dropbtn3">K-Means Screeplot</button> 
+          </li> 
+        </ul>
+    </nav>    
+
+    <p class= "intrinsic">
+
+    </p>
+
+    <div class = "details">
+        <h3>Top 4 Attributes as per the sum of square loadings</h3>
+        <table id="myTable">
+
+        </table>
+    </div>
+
+    <p id="title">
+
+    </p>    
+       -->
+    
+</body>
+
+<!-- <script src="olympics/treemap.js"></script> -->
+<script src="olympics/chloropeth.js"></script>
+
+</html>
