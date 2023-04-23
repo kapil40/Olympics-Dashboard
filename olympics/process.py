@@ -110,7 +110,20 @@ def generate_barchart_pcp_json():
 def generate_pcp_json():
     df = pd.read_csv('test.csv')
     filtered_df = df[df["Year"] == selected_year]   
+    new_df = filtered_df[['ID', 'Age', 'Weight', 'Height', 'Sex']]
+    json_str = new_df.to_json()
     
+    response = make_response(json_str)
+    response.headers['Content-Disposition'] = 'attachment; filename=pcp.json'
+    response.headers['Content-Type'] = 'application/json'
+
+    socketio.emit('updated-pcp-json', response.data.decode('utf-8'))
+
+@socketio.on('connect')
+def generate_pca_json():
+    df = pd.read_csv('test.csv')
+    
+    filtered_df = df[df["Year"] == selected_year]
     nocs = filtered_df["NOC"].unique()
 
     new_country_data = pd.DataFrame()
@@ -155,30 +168,13 @@ def generate_pcp_json():
     
     json_str = data_dict.to_json()
     
+    
     response = make_response(json_str)
+    
     response.headers['Content-Disposition'] = 'attachment; filename=pca.json'
     response.headers['Content-Type'] = 'application/json'
 
     socketio.emit('updated-pca-json', response.data.decode('utf-8'))
-
-@socketio.on('connect')
-def generate_pca_json():
-    df = pd.read_csv('test.csv')
-    
-    filtered_df = df[df["Year"] == selected_year]
-    
-    sports_count = filtered_df.groupby('Sport').size().reset_index(name='Count')
-    sports_count= sports_count.sort_values(by='Count', ascending=False)
-    sports_count = sports_count.head(20)
-    
-    json_str = sports_count.to_json()
-    
-    response = make_response(json_str)
-    
-    response.headers['Content-Disposition'] = 'attachment; filename=barchart.json'
-    response.headers['Content-Type'] = 'application/json'
-
-    socketio.emit('updated-barchart-json', response.data.decode('utf-8'))
 
 if __name__ == '__main__':
     socketio.run(app)
