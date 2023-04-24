@@ -126,69 +126,73 @@ def generate_pca_json():
     year = selected_year
 
     year_data = data[data["Year"] == year]
-    # year_data = year_data[year_data["Season"] == "Summer"]
-
+    
     nocs = year_data["NOC"].unique()
 
     new_country_data = pd.DataFrame()
+    if not(selected_year == 1916 or selected_year == 1940 or selected_year == 1944):
+        for country in nocs:
 
-    for country in nocs:
+            noc_df = year_data[year_data["NOC"] == country]
+            # noc_df = country_data[(country_data['NOC'] == country) & (country_data['Year'] == year)]      
 
-        noc_df = year_data[year_data["NOC"] == country]
-        # noc_df = country_data[(country_data['NOC'] == country) & (country_data['Year'] == year)]      
+            gold_medals = len(noc_df[noc_df['Medal'] == 'Gold'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+            silver_medals = len(noc_df[noc_df['Medal'] == 'Silver'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+            bronze_medals = len(noc_df[noc_df['Medal'] == 'Bronze'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
 
-        gold_medals = len(noc_df[noc_df['Medal'] == 'Gold'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
-        silver_medals = len(noc_df[noc_df['Medal'] == 'Silver'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
-        bronze_medals = len(noc_df[noc_df['Medal'] == 'Bronze'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+            total_medals = gold_medals + silver_medals + bronze_medals
 
-        total_medals = gold_medals + silver_medals + bronze_medals
+            if total_medals > 0:
 
-        if total_medals > 0:
+                data = {
+                    "Country": country,
+                    "Gold": gold_medals,
+                    "Silver": silver_medals,
+                    "Bronze": bronze_medals,
+                }
 
-            data = {
-                "Country": country,
-                "Gold": gold_medals,
-                "Silver": silver_medals,
-                "Bronze": bronze_medals,
-            }
+                new_country_data = new_country_data.append(data, ignore_index=True)
+                
+        new_country_data.sort_values(by=['Gold', 'Silver', 'Bronze'], ascending=False, inplace=True)
+        new_country_data = new_country_data.head(35)
 
-            new_country_data = new_country_data.append(data, ignore_index=True)
-            
-    new_country_data.sort_values(by=['Gold', 'Silver', 'Bronze'], ascending=False, inplace=True)
-    new_country_data = new_country_data.head(35)
+        # print("table",new_country_data)
 
-    # print("table",new_country_data)
+        data = new_country_data.loc[:, ["Gold", "Silver", "Bronze"]]
+        # print(data)
+        y = new_country_data["Country"]
 
-    data = new_country_data.loc[:, ["Gold", "Silver", "Bronze"]]
-    # print(data)
-    y = new_country_data["Country"]
+        le = preprocessing.LabelEncoder()
+        countries = le.fit_transform(y)
 
-    le = preprocessing.LabelEncoder()
-    countries = le.fit_transform(y)
+        scaler = StandardScaler()
+        scaler.fit(data)
+        scaled_data = scaler.transform(data)
 
-    scaler = StandardScaler()
-    scaler.fit(data)
-    scaled_data = scaler.transform(data)
+        pca = PCA(n_components=2)
+        pca_results = pca.fit_transform(scaled_data)
 
-    pca = PCA(n_components=2)
-    pca_results = pca.fit_transform(scaled_data)
+        data = {
+            "pca_results":pca_results.tolist(),
+            "countries":countries.tolist(),
+            "country_names":y.tolist()
+        }
 
-    data = {
-        "pca_results":pca_results.tolist(),
-        "countries":countries.tolist(),
-        "country_names":y.tolist()
-    }
-
-
-    json_str = data.to_json()
+        json_str = json.dumps(data)
+        
+        response = make_response(json_str)
+        
+        response.headers['Content-Disposition'] = 'attachment; filename=pca.json'
+        response.headers['Content-Type'] = 'application/json'
     
-    
-    response = make_response(json_str)
-    
-    response.headers['Content-Disposition'] = 'attachment; filename=pca.json'
-    response.headers['Content-Type'] = 'application/json'
+    if (selected_year == 1916 or selected_year == 1940 or selected_year == 1944):
+        json_str = json.dumps('')
+        response = make_response(json_str)
+        socketio.emit('updated-pca-json', response.data.decode('utf-8'))
+    else:
+        socketio.emit('updated-pca-json', response.data.decode('utf-8'))
 
-    socketio.emit('updated-pca-json', response.data.decode('utf-8'))
+    # socketio.emit('updated-pca-json', response.data.decode('utf-8'))
 
 if __name__ == '__main__':
     socketio.run(app)
