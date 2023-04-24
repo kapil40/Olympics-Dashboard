@@ -121,23 +121,30 @@ def generate_pcp_json():
 
 @socketio.on('connect')
 def generate_pca_json():
-    df = pd.read_csv('test.csv')
-    
-    filtered_df = df[df["Year"] == selected_year]
-    nocs = filtered_df["NOC"].unique()
+
+    data = pd.read_csv("test.csv")
+    year = selected_year
+
+    year_data = data[data["Year"] == year]
+    # year_data = year_data[year_data["Season"] == "Summer"]
+
+    nocs = year_data["NOC"].unique()
 
     new_country_data = pd.DataFrame()
 
     for country in nocs:
-        country_data = filtered_df[filtered_df["NOC"] == country]
 
-        gold_medals = len(country_data[country_data["Medal"] == "Gold"])
-        silver_medals = len(country_data[country_data["Medal"] == "Silver"])
-        bronze_medals = len(country_data[country_data["Medal"] == "Bronze"])
+        noc_df = year_data[year_data["NOC"] == country]
+        # noc_df = country_data[(country_data['NOC'] == country) & (country_data['Year'] == year)]      
+
+        gold_medals = len(noc_df[noc_df['Medal'] == 'Gold'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+        silver_medals = len(noc_df[noc_df['Medal'] == 'Silver'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+        bronze_medals = len(noc_df[noc_df['Medal'] == 'Bronze'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
 
         total_medals = gold_medals + silver_medals + bronze_medals
 
         if total_medals > 0:
+
             data = {
                 "Country": country,
                 "Gold": gold_medals,
@@ -145,11 +152,15 @@ def generate_pca_json():
                 "Bronze": bronze_medals,
             }
 
-        new_country_data = new_country_data.append(data, ignore_index=True)
+            new_country_data = new_country_data.append(data, ignore_index=True)
+            
+    new_country_data.sort_values(by=['Gold', 'Silver', 'Bronze'], ascending=False, inplace=True)
+    new_country_data = new_country_data.head(35)
 
-# print("new country data-->\n",new_country_data)
+    # print("table",new_country_data)
 
     data = new_country_data.loc[:, ["Gold", "Silver", "Bronze"]]
+    # print(data)
     y = new_country_data["Country"]
 
     le = preprocessing.LabelEncoder()
@@ -162,11 +173,14 @@ def generate_pca_json():
     pca = PCA(n_components=2)
     pca_results = pca.fit_transform(scaled_data)
 
-    pca_x = pca_results[:, 0]
-    pca_y = pca_results[:, 1]
-    data_dict = {"pca_x": pca_x.tolist(), "pca_y": pca_y.tolist(), "countries": countries.tolist()}
-    
-    json_str = data_dict.to_json()
+    data = {
+        "pca_results":pca_results.tolist(),
+        "countries":countries.tolist(),
+        "country_names":y.tolist()
+    }
+
+
+    json_str = data.to_json()
     
     
     response = make_response(json_str)

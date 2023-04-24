@@ -393,3 +393,116 @@ function brushend() {
           });
       }, 100)();
 }
+
+var json_data = JSON.parse('{{ data|safe }}');
+
+    let pca_data = json_data.pca_results;
+    let countries = json_data.countries;
+    let country_names = json_data.country_names;
+    
+    console.log("pca data-->",pca_data)
+
+    let data = pca_data;
+
+    // set the dimensions and margins of the graph
+    var margin_pca = {top: 10, right: 30, bottom: 30, left: 60},
+        width = 460 - margin_pca.left - margin_pca.right,
+        height = 290 - margin_pca.top - margin_pca.bottom;
+
+    // append the svg object to the body of the page
+    var svg_pca = d3v5.select(".pca")
+    .append("svg")
+        .attr("width", width + margin_pca.left + margin_pca.right)
+        .attr("height", height + margin_pca.top + margin_pca.bottom)
+    .append("g")
+        .attr("transform",
+            "translate(" + margin_pca.left + "," + margin_pca.top + ")");
+
+    let max_X = 0, max_Y = 0, min_X = Number.POSITIVE_INFINITY, min_Y = Number.POSITIVE_INFINITY;
+    for(let i = 0; i <pca_data.length; i++) {
+
+        if(max_X <pca_data[i][0]) {max_X =pca_data[i][0]};
+        if(min_X >pca_data[i][0]) {min_X =pca_data[i][0]};
+        
+        if(min_Y >pca_data[i][1]) {min_Y =pca_data[i][1]};
+        if(max_Y <pca_data[i][1]) {max_Y =pca_data[i][1]};
+    }
+
+    //Read the data
+    // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv", function(data) {
+
+    // Add X axis
+    var x = d3v5.scaleLinear()
+        .domain([min_X, max_X])
+        .range([ 0, width ]);
+    svg_pca.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3v5.axisBottom(x));
+
+    // Add Y axis
+    var y = d3v5.scaleLinear()
+        .domain([min_Y, max_Y])
+        .range([ height, 0]);
+    svg_pca.append("g")
+        .call(d3v5.axisLeft(y));
+
+    // Color scale: give me a specie name, I return a color
+    // var color = d3.scaleOrdinal()
+    // .domain(countries) // Replace with your actual array of country names
+    // .range(d3.schemeCategory20b); // You can use any predefined color scheme from the library
+
+    var color = d3v5.scaleOrdinal()
+        .domain(countries)
+        .range(d3v5.schemeSet2);
+
+    // Add dots
+    var myCircle = svg_pca.append('g')
+        .selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) {  return x(d[0]); } )
+        .attr("cy", function (d) { return y(d[1]); } )
+        .attr("r", 5)
+        // .on('mouseover', function(d, i) {
+
+        
+
+        // }) 
+        // .style("fill", "#FF0000")
+        .style("fill", function (d) { return color(countries) } )
+        .style("opacity", 0.5)
+
+    svg_pca.append('g')
+    .selectAll("text")
+    .data(data)
+    .enter()
+    .append("text")
+        .attr("x", function (d) { return x(d[0]) + 8; }) // Adjust the x position to add some padding
+        .attr("y", function (d) { return y(d[1]) + 4; }) // Adjust the y position to add some padding
+        .text(function(d, i) { return country_names[i]; }) // Set the text content to the country name
+        .attr("font-size", "6.5px") // Set the font size
+        .attr("fill", "black"); // Set the text color
+
+
+    // Add brushing
+    svg_pca
+        .call( d3v5.brush()                 // Add the brush feature using the d3.brush function
+        .extent( [ [0,0], [width,height] ] ) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+        .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+        )
+
+    // Function that is triggered when brushing is performed
+    function updateChart() {
+        extent = d3v5.event.selection
+        myCircle.classed("selected", function(d){  return isBrushed(extent, x(d[0]), y(d[1]) ) } )
+    }
+
+    // A function that return TRUE or FALSE according if a dot is in the selection or not
+    function isBrushed(brush_coords, cx, cy) {
+        var x0 = brush_coords[0][0],
+            x1 = brush_coords[1][0],
+            y0 = brush_coords[0][1],
+            y1 = brush_coords[1][1];
+        return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    // This return TRUE or FALSE depending on if the points is in the selected area
+    }
