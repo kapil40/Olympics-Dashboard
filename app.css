@@ -144,7 +144,10 @@ body {
   display: flex;
   
 }
-
+.bottom-section {
+  display: flex;
+  
+}
 .background path {
   fill: none;
   stroke: #ccc;
@@ -173,6 +176,13 @@ body {
   text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
   cursor: move;
 }
+
+.selected {
+  opacity: 1 !important;
+  stroke: black;
+  stroke-width: 1px;
+}
+
 .top-section {height: 350px;}
 .d3-geomap {height: 350px;}
 .d3-geomap text {fill:#333;font-size:12px}
