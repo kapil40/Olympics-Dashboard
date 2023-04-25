@@ -544,6 +544,8 @@ svg_pie.call(tip_pie);
 
 socket.on('updated-pie-json', function(jsonString) {
 
+  console.log("Gold, silver and bronze-->",jsonString)
+
   svg_pie.selectAll("*").remove();
       if(year == 1916 || year == 1940 || year == 1944) {
         svg_pie.append("text")
