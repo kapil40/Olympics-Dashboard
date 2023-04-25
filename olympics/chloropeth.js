@@ -172,15 +172,18 @@ socket.on('updated-barchart-json', function(jsonString) {
     
       //Bars
       svg_1.selectAll("myRect")
-        .data(jsonData)
-        .join("rect")
-        .attr("x", 0)
-        .attr("y", d => y(d.Sport) + 5)
-        .attr("width", d => x(+d.Count))
-        .attr("height", y.bandwidth() /2)
-        .on("mouseover", function(event,d) {tip_1.show(event,d);})
-        .on("mouseleave", function(event,d) {tip_1.hide(event,d);})
-        .attr("fill", "#69b3a2")
+      .data(jsonData)
+      .join("rect")
+      .attr("x", 0)
+      .attr("y", d => y(d.Sport) + 5)
+      .attr("width", 0) // Set initial width to 0 for transition
+      .attr("height", y.bandwidth() / 2)
+      .on("mouseover", function(event, d) {tip_1.show(event,d);})
+      .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
+      .attr("fill", "#69b3a2")
+      .transition() // Add transition effect
+      .duration(1000) // Set duration for transition
+      .attr("width", d => x(+d.Count)); 
       } 
     });
     
