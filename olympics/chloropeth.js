@@ -175,7 +175,7 @@ socket.on('updated-barchart-json', function(jsonString) {
         .data(jsonData)
         .join("rect")
         .attr("x", 0)
-        .attr("y", d => y(d.Sport))
+        .attr("y", d => y(d.Sport) + 5)
         .attr("width", d => x(+d.Count))
         .attr("height", y.bandwidth() /2)
         .on("mouseover", function(event,d) {tip_1.show(event,d);})
@@ -516,22 +516,22 @@ socket.on('updated-pca-json', function(jsonString) {
 
 
 })
-// console.log("pca data-->",pca_data)
-
 
 // PIE CHART 
 
-var margin_pie = {top: 20, right: 30, bottom: 40, left: 90},
+var margin_pie = {top: 20, right: 10, bottom: 10, left: 5},
     width_1 = 450 - margin_pie.left - margin_pie.right,
     height_1 = 290 - margin_pie.top - margin_pie.bottom;
 
+var radius = 100;
+
 // append the svg object to the body of the page
-const svg_pie = d3.select("#barchart")
+const svg_pie = d3.select(".pie")
   .append("svg")
     .attr("width", width_1 + margin_pie.left + margin_pie.right)
     .attr("height", height_1 + margin_pie.top + margin_pie.bottom)
   .append("g")
-    .attr("transform", `translate(${margin_pie.left + 35}, ${margin_pie.top -10})`);
+    .attr("transform", `translate(${margin_pie.left + 125}, ${margin_pie.top + 90})`);
 
 var tip_pie = d3.tip()
   .attr("class","d3-tip")
@@ -556,13 +556,43 @@ socket.on('updated-pie-json', function(jsonString) {
       }
       
      else {
-      var json_data = JSON.parse(jsonString);
+      var data = JSON.parse(jsonString);
 
-      console.log("pie chart data-->".json_data)
+      const color = d3.scaleOrdinal()
+        .range(d3.schemeSet2);
 
-      // const data = {
-      //   'Gold_Medals': json_data
-      // }
+      // Compute the position of each group on the pie:
+      const pie = d3.pie()
+        .value(function(d) {return d[1]})
+      const data_ready = pie(Object.entries(data))
+      // Now I know that group A goes from 0 degrees to x degrees and so on.
+
+      // shape helper to build arcs:
+      const arcGenerator = d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius)
+
+      // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+      svg_pie
+        .selectAll('mySlices')
+        .data(data_ready)
+        .join('path')
+          .attr('d', arcGenerator)
+          .attr('fill', function(d){ return(color(d.data[0])) })
+          .attr("stroke", "black")
+          .style("stroke-width", "2px")
+          .style("opacity", 0.7)
+
+      // Now add the annotation. Use the centroid method to get the best coordinates
+      svg_pie
+        .selectAll('mySlices')
+        .data(data_ready)
+        .join('text')
+        .text(function(d){ return "grp " + d.data[0]})
+        .attr("transform", function(d) { return `translate(${arcGenerator.centroid(d)})`})
+        .style("text-anchor", "middle")
+        .style("font-size", 17)
+
 
      }
 

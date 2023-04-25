@@ -216,7 +216,7 @@ def generate_pie_json():
             gold_medals += len(noc_df[noc_df['Medal'] == 'Gold'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
             silver_medals += len(noc_df[noc_df['Medal'] == 'Silver'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
             bronze_medals += len(noc_df[noc_df['Medal'] == 'Bronze'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
-            no_medals += len(noc_df[noc_df['Medal'] == 'NA'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+            no_medals += len(noc_df[noc_df['Medal'].isna()].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
 
             # total_medals = gold_medals + silver_medals + bronze_medals
 
@@ -230,9 +230,9 @@ def generate_pie_json():
         }
 
 
-        new_country_data = new_country_data.append(data, ignore_index=True)
+        # new_country_data = new_country_data.append(data, ignore_index=True)
     
-        json_str = json.dumps(new_country_data)
+        json_str = json.dumps(data)
 
         response = make_response(json_str)
             
