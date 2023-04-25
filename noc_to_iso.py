@@ -1,28 +1,42 @@
-import pandas as pd
 import pycountry
+import pandas as pd
 
-# Read in the CSV file
-df = pd.read_csv('olympics/test.csv')
-df["Medal"].fillna("NA", inplace=True)
+df = pd.read_csv("olympics/olympics.csv")
+filtered_df = df[df["Season"] == "Summer"]
+filtered_df['Team'] = filtered_df['Team'].replace('Soviet Union', 'Russia')
+filtered_df['NOC'] = filtered_df['NOC'].replace('URS', 'RUS')
+
+filtered_df[['Height']] = filtered_df.groupby(['Year','NOC'])[['Height']].transform(lambda x: x.fillna(x.mean()))
+filtered_df[['Weight']] = filtered_df.groupby(['Year','NOC'])[['Weight']].transform(lambda x: x.fillna(x.mean()))
+filtered_df[['Age']] = filtered_df.groupby(['Year','NOC'])[['Age']].transform(lambda x: x.fillna(x.mean()))
+
+filtered_df["Medal"].fillna("NA", inplace=True)
+
+filtered_df.fillna(method='ffill', inplace=True)
+filtered_df.fillna(method='bfill', inplace=True)
+
+filtered_df["Age"] = filtered_df["Age"].astype(int)
+filtered_df["Height"] = filtered_df["Height"].astype(int)
+filtered_df["Weight"] = filtered_df["Weight"].astype(int)
 
 # Map NOC codes to ISO 3166-1 alpha-3 codes
 iso3_codes = {}
-print("all unique countries-->\n",df[df['Team']=="Denmark/Sweden"])
+print("all unique countries-->\n",filtered_df[filtered_df['Team']=="Denmark/Sweden"])
 
-for noc in df['NOC'].unique():
+for noc in filtered_df['NOC'].unique():
     try:
         iso3_codes[noc] = pycountry.countries.get(alpha_3=noc).alpha_3
     except AttributeError:
         iso3_codes[noc] = 'Unknown'
 
 # Add a new column to the dataframe with the ISO 3166-1 alpha-3 codes
-df['iso3'] = df['NOC'].map(iso3_codes)
-print("new dataframe with iso3 values-->",df[df['iso3']=="Unknown"]["NOC"].unique())
+filtered_df['iso3'] = filtered_df['NOC'].map(iso3_codes)
+print("new dataframe with iso3 values-->",filtered_df[filtered_df['iso3']=="Unknown"]["NOC"].unique())
 
 values_to_drop = ["IOA", "YUG", "ROT", "CRT", "WIF", "UNK", "NFL"]
 
 # Drop rows where "NOC" is in values_to_drop
-df = df[~df['NOC'].isin(values_to_drop)]
+filtered_df = filtered_df[~filtered_df['NOC'].isin(values_to_drop)]
 
 
 map = {
@@ -138,13 +152,13 @@ map = {
 
 #         print("{} changes to {}".format(noc, map[noc]))
 
-iso3_series = df['NOC'].map(map)
+iso3_series = filtered_df['NOC'].map(map)
 print("iso3_series-->",len(iso3_series))
 
 # Replace "Unknown" values with mapped ISO3 codes
-df['iso3'] = iso3_series.fillna(df['iso3'])
+filtered_df['iso3'] = iso3_series.fillna(filtered_df['iso3'])
 
 # print("new dataframe with iso3 values-->",df[df['iso3']=="Unknown"]["NOC"].unique())
-print("number of null iso3 values-->",df[df['iso3'].isna()])
+print("number of null iso3 values-->",filtered_df[filtered_df['iso3'].isna()])
 # Write the new CSV file
-df.to_csv('output.csv', index=False)
+filtered_df.to_csv('final.csv', index=False)
