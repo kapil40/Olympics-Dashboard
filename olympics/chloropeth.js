@@ -588,7 +588,7 @@ socket.on('updated-pie-json', function(jsonString) {
         .selectAll('mySlices')
         .data(data_ready)
         .join('text')
-        .text(function(d){ return "grp " + d.data[0]})
+        .text(function(d){ return d.data[0]})
         .attr("transform", function(d) { return `translate(${arcGenerator.centroid(d)})`})
         .style("text-anchor", "middle")
         .style("font-size", 17)
