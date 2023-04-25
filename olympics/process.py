@@ -25,6 +25,7 @@ def trigger_script():
     generate_barchart_json()
     generate_pcp_json()
     generate_pca_json()
+    generate_pie_json()
     return jsonify(year)
 
 @app.route('/trigger-pcp', methods=['GET'])
@@ -193,6 +194,58 @@ def generate_pca_json():
         socketio.emit('updated-pca-json', response.data.decode('utf-8'))
 
     # socketio.emit('updated-pca-json', response.data.decode('utf-8'))
+@socketio.on('connect')
+def generate_pie_json():
+
+    gold_medals, silver_medals, bronze_medals, no_medals = 0,0,0,0
+
+    data = pd.read_csv("test.csv")
+    year = selected_year
+
+    year_data = data[data["Year"] == year]
+    
+    nocs = year_data["NOC"].unique()
+
+    new_country_data = pd.DataFrame()
+    if not(selected_year == 1916 or selected_year == 1940 or selected_year == 1944):
+        for country in nocs:
+
+            noc_df = year_data[year_data["NOC"] == country]
+            # noc_df = country_data[(country_data['NOC'] == country) & (country_data['Year'] == year)]      
+
+            gold_medals += len(noc_df[noc_df['Medal'] == 'Gold'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+            silver_medals += len(noc_df[noc_df['Medal'] == 'Silver'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+            bronze_medals += len(noc_df[noc_df['Medal'] == 'Bronze'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+            no_medals += len(noc_df[noc_df['Medal'] == 'NA'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+
+            # total_medals = gold_medals + silver_medals + bronze_medals
+
+            # if total_medals > 0:
+
+        data = {
+            "Gold": gold_medals,
+            "Silver": silver_medals,
+            "Bronze": bronze_medals,
+            "No_medal": no_medals
+        }
+
+
+        new_country_data = new_country_data.append(data, ignore_index=True)
+    
+        json_str = json.dumps(new_country_data)
+
+        response = make_response(json_str)
+            
+        response.headers['Content-Disposition'] = 'attachment; filename=pie.json'
+        response.headers['Content-Type'] = 'application/json'
+
+        socketio.emit('updated-pie-json', response.data.decode('utf-8'))
+
+    else:
+        json_str = json.dumps('')
+        response = make_response(json_str)
+        socketio.emit('updated-pie-json', response.data.decode('utf-8'))
+
 
 if __name__ == '__main__':
     socketio.run(app)

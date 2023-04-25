@@ -518,3 +518,57 @@ socket.on('updated-pca-json', function(jsonString) {
 })
 // console.log("pca data-->",pca_data)
 
+
+// PIE CHART 
+
+var margin_pie = {top: 20, right: 30, bottom: 40, left: 90},
+    width_1 = 450 - margin_pie.left - margin_pie.right,
+    height_1 = 290 - margin_pie.top - margin_pie.bottom;
+
+// append the svg object to the body of the page
+const svg_pie = d3.select("#barchart")
+  .append("svg")
+    .attr("width", width_1 + margin_pie.left + margin_pie.right)
+    .attr("height", height_1 + margin_pie.top + margin_pie.bottom)
+  .append("g")
+    .attr("transform", `translate(${margin_pie.left + 35}, ${margin_pie.top -10})`);
+
+var tip_pie = d3.tip()
+  .attr("class","d3-tip")
+  .direction('e')
+  .html(function(event,d,i) {
+      return "<span style='color:red'>" + (+d.Count) + "</span>";
+  });
+
+svg_pie.call(tip_pie);  
+
+socket.on('updated-pie-json', function(jsonString) {
+
+  svg_pie.selectAll("*").remove();
+      if(year == 1916 || year == 1940 || year == 1944) {
+        svg_pie.append("text")
+        .attr("x", width_1 / 2  + 170)
+        .attr("y", -margin_pie.top / 2 + 200)
+        .attr("text-anchor", "middle")
+        .style("font-size", "24px")
+        .text("NO OLYMPICS WERE HELD!!!!!!");
+
+      }
+      
+     else {
+      var json_data = JSON.parse(jsonString);
+
+      console.log("pie chart data-->".json_data)
+
+      // const data = {
+      //   'Gold_Medals': json_data
+      // }
+
+     }
+
+})
+
+
+
+
+
