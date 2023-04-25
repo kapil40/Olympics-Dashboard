@@ -40,12 +40,12 @@ def trigger_pcp():
 
 @socketio.on('connect')
 def generate_map_json():
-    df = pd.read_csv('test.csv')
+    df = pd.read_csv('output.csv')
     
     filtered_df = df[df["Year"] == selected_year]
 
-    country_counts = filtered_df.groupby('NOC').size().reset_index(name='Count')
-    country_counts = country_counts.rename(columns={'NOC': 'iso3'})
+    country_counts = filtered_df.groupby('iso3').size().reset_index(name='Count')
+    # country_counts = country_counts.rename(columns={'NOC': 'iso3'})
     json_str = country_counts.to_json()
     response = make_response(json_str)
     response.headers['Content-Disposition'] = 'attachment; filename=map.json'
@@ -55,12 +55,12 @@ def generate_map_json():
 
 @socketio.on('connect')
 def generate_map_pcp_json():
-    df = pd.read_csv('test.csv')
+    df = pd.read_csv('output.csv')
     
     filtered_df = df[df["Year"] == selected_year]
     filtered_df = filtered_df[filtered_df['ID'].isin(selected_line)]
-    country_counts = filtered_df.groupby('NOC').size().reset_index(name='Count')
-    country_counts = country_counts.rename(columns={'NOC': 'iso3'})
+    country_counts = filtered_df.groupby('iso3').size().reset_index(name='Count')
+    # country_counts = country_counts.rename(columns={'NOC': 'iso3'})
     json_str = country_counts.to_json()
     response = make_response(json_str)
     response.headers['Content-Disposition'] = 'attachment; filename=map.json'
@@ -70,7 +70,7 @@ def generate_map_pcp_json():
 
 @socketio.on('connect')
 def generate_barchart_json():
-    df = pd.read_csv('test.csv')
+    df = pd.read_csv('output.csv')
     
     filtered_df = df[df["Year"] == selected_year]
     
@@ -89,7 +89,7 @@ def generate_barchart_json():
 
 @socketio.on('connect')
 def generate_barchart_pcp_json():
-    df = pd.read_csv('test.csv')
+    df = pd.read_csv('output.csv')
     
     filtered_df = df[df["Year"] == selected_year]
     filtered_df = filtered_df[filtered_df['ID'].isin(selected_line)]
@@ -109,7 +109,7 @@ def generate_barchart_pcp_json():
 
 @socketio.on('connect')
 def generate_pcp_json():
-    df = pd.read_csv('test.csv')
+    df = pd.read_csv('output.csv')
     filtered_df = df[df["Year"] == selected_year]   
     new_df = filtered_df[['ID', 'Age', 'Weight', 'Height', 'Sex']]
     json_str = new_df.to_json()
@@ -123,7 +123,7 @@ def generate_pcp_json():
 @socketio.on('connect')
 def generate_pca_json():
 
-    data = pd.read_csv("test.csv")
+    data = pd.read_csv("output.csv")
     year = selected_year
 
     year_data = data[data["Year"] == year]
@@ -199,7 +199,7 @@ def generate_pie_json():
 
     gold_medals, silver_medals, bronze_medals, no_medals = 0,0,0,0
 
-    data = pd.read_csv("test.csv")
+    data = pd.read_csv("output.csv")
     year = selected_year
 
     year_data = data[data["Year"] == year]
