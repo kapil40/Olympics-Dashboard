@@ -184,6 +184,11 @@ socket.on('updated-barchart-json', function(jsonString) {
       .transition() // Add transition effect
       .duration(1000) // Set duration for transition
       .attr("width", d => x(+d.Count)); 
+
+      svg_1.append("text")
+        .attr("x", width_1/2 - 70)
+        .attr("y", height_1 + margin_1.top +24)
+        .text("Number of athletes");
       } 
     });
     
@@ -272,7 +277,7 @@ socket.on('updated-pcp-json', function(jsonString) {
     .selectAll("path")
       .data(olympics)
     .enter().append("path")
-      .style("stroke", "blue")
+      .style("stroke", "#87CEEB")
       .attr("d", path_1);
   
   // Add a group element for each dimension.
@@ -561,8 +566,11 @@ socket.on('updated-pie-json', function(jsonString) {
      else {
       var data = JSON.parse(jsonString);
 
+      // const color = d3.scaleOrdinal()
+      //   .range(d3.schemeSet2);
       const color = d3.scaleOrdinal()
-        .range(d3.schemeSet2);
+        .domain(["Gold", "Silver", "Bronze", "No_medal"])
+        .range(["#FFD700", "#C0C0C0", "#CD7F32", "#add8e6"]);
 
       // Compute the position of each group on the pie:
       const pie = d3.pie()
@@ -594,7 +602,7 @@ socket.on('updated-pie-json', function(jsonString) {
         .text(function(d){ return d.data[0]})
         .attr("transform", function(d) { return `translate(${arcGenerator.centroid(d)})`})
         .style("text-anchor", "middle")
-        .style("font-size", 17)
+        .style("font-size", 12)
 
 
      }
