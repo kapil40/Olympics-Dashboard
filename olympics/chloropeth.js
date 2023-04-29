@@ -73,6 +73,7 @@ const slider = d3.sliderBottom()
     year = val.getFullYear();
     const params = new URLSearchParams();
     params.append("selectedYear", JSON.stringify(year));
+    params.append("selectedSeason", JSON.stringify(season));
     d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
           .then(function(data) {
               // console.log(data);
