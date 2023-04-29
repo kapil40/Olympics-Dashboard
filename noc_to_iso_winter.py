@@ -2,7 +2,7 @@ import pycountry
 import pandas as pd
 
 df = pd.read_csv("olympics/olympics.csv")
-filtered_df = df[df["Season"] == "Summer"]
+filtered_df = df[df["Season"] == "Winter"]
 filtered_df['Team'] = filtered_df['Team'].replace('Soviet Union', 'Russia')
 filtered_df['NOC'] = filtered_df['NOC'].replace('URS', 'RUS')
 
@@ -161,4 +161,4 @@ filtered_df['iso3'] = iso3_series.fillna(filtered_df['iso3'])
 # print("new dataframe with iso3 values-->",df[df['iso3']=="Unknown"]["NOC"].unique())
 print("number of null iso3 values-->",filtered_df[filtered_df['iso3'].isna()])
 # Write the new CSV file
-filtered_df.to_csv('final_summer.csv', index=False)
+filtered_df.to_csv('final_winter.csv', index=False)
