@@ -13,13 +13,16 @@ CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 selected_year = 0
+selected_season = ''
 selected_line = []
 
 @app.route('/trigger-script', methods=['GET'])
 def trigger_script():
     year = json.loads(request.args.get('selectedYear')) 
-    global selected_year
+    season = json.loads(request.args.get('selectedSeason')) 
+    global selected_year, selected_season
     selected_year = year
+    selected_season = season
     
     generate_map_json()
     generate_barchart_json()

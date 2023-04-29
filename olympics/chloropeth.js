@@ -7,14 +7,28 @@ const data1 = d3.range(0, 124,4).map(function (d) {
   return new Date(1896 + d, 10, 3);
 });
 
+var data2 = d3.range(0, 72,4).map(function (d) {
+  return new Date(1924 + d, 10, 3);
+});
+
+var data3 = d3.range(0, 24,4).map(function (d) {
+  return new Date(1994 + d, 10, 3);
+});
+
+const data4 = data2.concat(data3)
+
 var year;
+var season;
 
 window.onload = function() {
     year = 1896;
+    season = "Summer";
+    update_slider(season);
     // const country = '';
     const params = new URLSearchParams();
     // const params_1 = new URLSearchParams();
     params.append("selectedYear", JSON.stringify(year));
+    params.append("selectedSeason", JSON.stringify(season));
     // params_1.append("selectedCountry", JSON.stringify(country));
     d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
           .then(function(data) {
@@ -25,14 +39,36 @@ window.onload = function() {
             });
 };
 
+var allGroup = ["Summer", "Winter"];
+
+// add the options to the button
+d3.select(".dropdown")
+  .selectAll('myOptions')
+    .data(allGroup)
+  .enter()
+  .append('option')
+  .text(function (d) { return d; }) // text showed in the menu
+  .attr("value", function (d) { return d; });
+
+d3.select(".dropdown").on("change", function(d){
+    selectedGroup = this.value;
+    season = this.value;
+    console.log(season);
+    update_slider(season);
+});
+
+
+function update_slider(season) {
+
+  svg.selectAll("*").remove();
 const slider = d3.sliderBottom()
-  .min(d3.min(data1))
-  .max(d3.max(data1))
-  .step(1000 * 60 * 60 * 24 * 365 * 4)
+  .min(season === 'Summer' ? d3.min(data1) : d3.min(data4))
+  .max(season === 'Summer' ? d3.max(data1) : d3.max(data4))
+  .step(1000 * 60 * 60 * 24 * 365 * 2)
   .width(1240)
   .tickFormat(d3.timeFormat('%Y'))
-  .tickValues(data1)
-  .default(new Date(1896, 10, 3))
+  .tickValues(season === 'Summer' ? data1: data4)
+  .default(season === 'Summer' ? new Date(1896, 10, 3): new Date(1924, 10, 3))
   .on('end', (val) => {
     year = val.getFullYear();
     const params = new URLSearchParams();
@@ -48,7 +84,8 @@ const slider = d3.sliderBottom()
 
 svg.append("g").attr('transform', 'translate(30,10)')
             .call(slider);
-            
+}
+
 var format = function(d) {
   return d3v5.format('d')(d);
 }
@@ -193,7 +230,7 @@ socket.on('updated-barchart-json', function(jsonString) {
     });
     
 
-var margin = {top: 20, right: 10, bottom: 10, left: 5},
+var margin = {top: 20, right: 10, bottom: 10, left: 55},
     width = 460 - margin.left - margin.right,
     height = 290 - margin.top - margin.bottom;
 
@@ -403,7 +440,7 @@ function brushend() {
 }
 
 // set the dimensions and margins of the graph
-var margin_pca = {top: 10, right: 30, bottom: 30, left: 60},
+var margin_pca = {top: 10, right: 30, bottom: 30, left: 110},
     width = 460 - margin_pca.left - margin_pca.right,
     height = 290 - margin_pca.top - margin_pca.bottom;
 
@@ -527,7 +564,7 @@ socket.on('updated-pca-json', function(jsonString) {
 
 // PIE CHART 
 
-var margin_pie = {top: 20, right: 10, bottom: 10, left: 5},
+var margin_pie = {top: 20, right: 10, bottom: 10, left: 45},
     width_1 = 450 - margin_pie.left - margin_pie.right,
     height_1 = 290 - margin_pie.top - margin_pie.bottom;
 
@@ -581,7 +618,7 @@ socket.on('updated-pie-json', function(jsonString) {
       // shape helper to build arcs:
       const arcGenerator = d3.arc()
         .innerRadius(0)
-        .outerRadius(radius)
+        .outerRadius(radius);
 
       // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
       svg_pie
@@ -592,7 +629,7 @@ socket.on('updated-pie-json', function(jsonString) {
           .attr('fill', function(d){ return(color(d.data[0])) })
           .attr("stroke", "black")
           .style("stroke-width", "2px")
-          .style("opacity", 0.7)
+          .style("opacity", 0.7) 
 
       // Now add the annotation. Use the centroid method to get the best coordinates
       svg_pie
@@ -602,8 +639,7 @@ socket.on('updated-pie-json', function(jsonString) {
         .text(function(d){ return d.data[0]})
         .attr("transform", function(d) { return `translate(${arcGenerator.centroid(d)})`})
         .style("text-anchor", "middle")
-        .style("font-size", 12)
-
+        .style("font-size", 12);
 
      }
 

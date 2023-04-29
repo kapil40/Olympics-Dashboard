@@ -144,9 +144,13 @@ body {
   display: flex;
   
 }
+
 .bottom-section {
+  display: flex; 
+}
+
+.slider-section {
   display: flex;
-  
 }
 .background path {
   fill: none;
