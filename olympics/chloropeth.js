@@ -516,6 +516,9 @@ socket.on('updated-pca-json', function(jsonString) {
         .data(data)
         .enter()
         .append("circle")
+        .transition()
+          .delay(function(d,i){return(i*3)})
+          .duration(1000)
         .attr("cx", function (d) { return x(d[0]); } )
         .attr("cy", function (d) { return y(d[1]); } )
         .attr("r", 5)
@@ -623,14 +626,29 @@ socket.on('updated-pie-json', function(jsonString) {
 
       // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
       svg_pie
-        .selectAll('mySlices')
-        .data(data_ready)
-        .join('path')
-          .attr('d', arcGenerator)
-          .attr('fill', function(d){ return(color(d.data[0])) })
-          .attr("stroke", "black")
-          .style("stroke-width", "2px")
-          .style("opacity", 0.7) 
+  .selectAll('mySlices')
+  .data(data_ready)
+  .join('path')
+    .attr('d', arcGenerator)
+    .attr('fill', function(d){ return(color(d.data[0])) })
+    .attr("stroke", "black")
+    .style("stroke-width", "2px")
+    .style("opacity", 0.7)
+    .transition()
+      .duration(500)
+      .attrTween('d', function(d) {
+        var startAngle = 0;
+        var endAngle = 0;
+        var interpolation = d3.interpolate(startAngle, d.endAngle);
+
+        return function(t) {
+          endAngle = interpolation(t);
+          d.endAngle = endAngle;
+          return arcGenerator(d);
+        };
+      })
+      .attr('fill', function(d){ return(color(d.data[0])) });
+
 
       // Now add the annotation. Use the centroid method to get the best coordinates
       svg_pie

@@ -43,7 +43,8 @@ def trigger_pcp():
 
 @socketio.on('connect')
 def generate_map_json():
-    df = pd.read_csv('final.csv')
+    filename = 'final_' + str(selected_season.lower()) + '.csv'
+    df = pd.read_csv(filename)
     
     filtered_df = df[df["Year"] == selected_year]
 
@@ -58,7 +59,8 @@ def generate_map_json():
 
 @socketio.on('connect')
 def generate_map_pcp_json():
-    df = pd.read_csv('final.csv')
+    filename = 'final_' + str(selected_season.lower()) + '.csv'
+    df = pd.read_csv(filename)
     
     filtered_df = df[df["Year"] == selected_year]
     filtered_df = filtered_df[filtered_df['ID'].isin(selected_line)]
@@ -73,7 +75,8 @@ def generate_map_pcp_json():
 
 @socketio.on('connect')
 def generate_barchart_json():
-    df = pd.read_csv('final.csv')
+    filename = 'final_' + str(selected_season.lower()) + '.csv'
+    df = pd.read_csv(filename)
     
     filtered_df = df[df["Year"] == selected_year]
     
@@ -92,7 +95,8 @@ def generate_barchart_json():
 
 @socketio.on('connect')
 def generate_barchart_pcp_json():
-    df = pd.read_csv('final.csv')
+    filename = 'final_' + str(selected_season.lower()) + '.csv'
+    df = pd.read_csv(filename)
     
     filtered_df = df[df["Year"] == selected_year]
     filtered_df = filtered_df[filtered_df['ID'].isin(selected_line)]
@@ -112,7 +116,8 @@ def generate_barchart_pcp_json():
 
 @socketio.on('connect')
 def generate_pcp_json():
-    df = pd.read_csv('final.csv')
+    filename = 'final_' + str(selected_season.lower()) + '.csv'
+    df = pd.read_csv(filename)
     filtered_df = df[df["Year"] == selected_year]   
     new_df = filtered_df[['ID', 'Age', 'Weight', 'Height', 'Sex']]
     json_str = new_df.to_json()
@@ -126,7 +131,9 @@ def generate_pcp_json():
 @socketio.on('connect')
 def generate_pca_json():
 
-    data = pd.read_csv("final.csv")
+    filename = 'final_' + str(selected_season.lower()) + '.csv'
+
+    data = pd.read_csv(filename)
     year = selected_year
 
     year_data = data[data["Year"] == year]
@@ -200,9 +207,11 @@ def generate_pca_json():
 @socketio.on('connect')
 def generate_pie_json():
 
+    filename = 'final_' + str(selected_season.lower()) + '.csv'
+
     gold_medals, silver_medals, bronze_medals, no_medals = 0,0,0,0
 
-    data = pd.read_csv("final.csv")
+    data = pd.read_csv(filename)
     year = selected_year
 
     year_data = data[data["Year"] == year]
