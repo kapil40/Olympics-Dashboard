@@ -441,7 +441,7 @@ function brushend() {
 }
 
 // set the dimensions and margins of the graph
-var margin_pca = {top: 10, right: 30, bottom: 30, left: 110},
+var margin_pca = {top: 10, right: 30, bottom: 30, left: 60},
     width = 460 - margin_pca.left - margin_pca.right,
     height = 290 - margin_pca.top - margin_pca.bottom;
 
@@ -512,19 +512,16 @@ socket.on('updated-pca-json', function(jsonString) {
 
       // Add dots
       var myCircle = svg_pca.append('g')
-        .selectAll("circle")
-        .data(data)
-        .enter()
-        .append("circle")
-        .transition()
-          .delay(function(d,i){return(i*3)})
-          .duration(1000)
-        .attr("cx", function (d) { return x(d[0]); } )
-        .attr("cy", function (d) { return y(d[1]); } )
-        .attr("r", 5)
-        // .style("fill", "#FF0000")
-        .style("fill", function (d) { return color(countries) } )
-        .style("opacity", 0.5)
+          .selectAll("circle")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("cx", function (d) {  return x(d[0]); } )
+          .attr("cy", function (d) { return y(d[1]); } )
+          .attr("r", 5)
+          // .style("fill", "#FF0000")
+          .style("fill", function (d) { return color(countries) } )
+          .style("opacity", 0.5)
 
       svg_pca.append('g')
       .selectAll("text")
@@ -543,14 +540,46 @@ socket.on('updated-pca-json', function(jsonString) {
           .call( d3v5.brush()                 // Add the brush feature using the d3.brush function
           .extent( [ [0,0], [width,height] ] ) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
           .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+          .on("end", sendCountries)
           )
 
       svg_pca.call(d3v5.brush().move, null);
 
-      // Function that is triggered when brushing is performed
+      // // Function that is triggered when brushing is performed
+      // function updateChart() {
+      //     extent = d3v5.event.selection
+      //     myCircle.classed("selected", function(d){  return isBrushed(extent, x(d[0]), y(d[1]) ) } )
+      // }
+      
+      var brushedData = new Set(); // initialize an empty array to store brushed data
+
       function updateChart() {
-          extent = d3v5.event.selection
-          myCircle.classed("selected", function(d){  return isBrushed(extent, x(d[0]), y(d[1]) ) } )
+        brushedData = new Set();
+        extent = d3v5.event.selection;
+        myCircle.classed("selected", function(d,i) {
+          var isBrushed_pca = extent ? isBrushed(extent, x(d[0]), y(d[1])) : false;
+          if (isBrushed_pca) {
+            brushedData.add(country_names[i]); // push the brushed data into the array
+          }
+          console.log(brushedData)
+          return isBrushed_pca;
+        });
+      }
+
+      function sendCountries() {
+
+      var countries = [...brushedData]
+      const params = new URLSearchParams();
+      params.append("selectedPcaCountries", JSON.stringify(countries));
+      _.debounce(function() {
+        d3.json("http://127.0.0.1:5000/trigger-pca" + "?" + params.toString())
+          .then(function(data) {
+            // console.log(data);
+          }).catch(function(error) {
+            // console.log(error);
+          });
+      }, 100)();
+
       }
 
       // A function that return TRUE or FALSE according if a dot is in the selection or not
@@ -563,9 +592,7 @@ socket.on('updated-pca-json', function(jsonString) {
       }
     }
 
-
 })
-
 // PIE CHART 
 
 var margin_pie = {top: 20, right: 10, bottom: 10, left: 45},
@@ -600,7 +627,7 @@ socket.on('updated-pie-json', function(jsonString) {
         .attr("y", -margin_pie.top / 2 + 200)
         .attr("text-anchor", "middle")
         .style("font-size", "24px")
-        .text("NO OLYMPICS WERE HELD!!!!!!");
+        .text("");
 
       }
       
