@@ -53,18 +53,33 @@ d3.select(".dropdown")
 d3.select(".dropdown").on("change", function(d){
     selectedGroup = this.value;
     season = this.value;
-    console.log(season);
+    if(season === "Summer") 
+      year = 1896;
+    else
+      year = 1924; 
     update_slider(season);
+    const params = new URLSearchParams();
+    params.append("selectedYear", JSON.stringify(year));
+    params.append("selectedSeason", JSON.stringify(season));
+    // params_1.append("selectedCountry", JSON.stringify(country));
+    d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
+          .then(function(data) {
+              // console.log(data);
+              
+            }).catch(function(error) {
+              // console.log(error);
+            });
 });
 
 
 function update_slider(season) {
 
   svg.selectAll("*").remove();
+
 const slider = d3.sliderBottom()
   .min(season === 'Summer' ? d3.min(data1) : d3.min(data4))
   .max(season === 'Summer' ? d3.max(data1) : d3.max(data4))
-  .step(1000 * 60 * 60 * 24 * 365 * 2)
+  .step(season === 'Summer' ? 1000 * 60 * 60 * 24 * 365 * 4 : 1000 * 60 * 60 * 24 * 365 *2)
   .width(1240)
   .tickFormat(d3.timeFormat('%Y'))
   .tickValues(season === 'Summer' ? data1: data4)
@@ -85,6 +100,7 @@ const slider = d3.sliderBottom()
 
 svg.append("g").attr('transform', 'translate(30,10)')
             .call(slider);
+
 }
 
 var format = function(d) {
@@ -141,7 +157,7 @@ socket.on('updated-map-json', function(jsonString) {
               // map.draw(selection);                    
             });
       
-var margin_1 = {top: 20, right: 30, bottom: 40, left: 90},
+var margin_1 = {top: 20, right: 30, bottom: 40, left: 100},
     width_1 = 760 - margin_1.left - margin_1.right,
     height_1 = 350 - margin_1.top - margin_1.bottom;
 
@@ -161,6 +177,15 @@ var tip_1 = d3.tip()
   });
 
 svg_1.call(tip_1);  
+
+// var tip_1 = d3.tip()
+//   .attr("class","d3-tip")
+//   .direction('e')
+//   .html(function(event,d,i) {
+//       return "<span style='color:red'>" + d.Sport + ": " +(+d.Count) + "</span>";
+//   });
+
+// svg_1.call(tip_1);  
 
 socket.on('updated-barchart-json', function(jsonString) {
       svg_1.selectAll("*").remove();
@@ -229,6 +254,91 @@ socket.on('updated-barchart-json', function(jsonString) {
         .text("Number of athletes");
       } 
     });
+
+// socket.on('updated-barchart-json', function(jsonString) {
+//   svg_1.selectAll("*").remove();
+
+//   var d = JSON.parse(jsonString);
+  
+//   // const isEmpty = Object.keys(d.Sport).every(key => !d.Sport[key]) && Object.values(d.Count).every(count => count === 0);
+//   if(year == 1916 || year == 1940 || year == 1944) {
+//       svg_1.append("text")
+//       .attr("x", width_1 / 2  + 170)
+//       .attr("y", -margin_1.top / 2 + 200)
+//       .attr("text-anchor", "middle")
+//       .style("font-size", "24px")
+//       .text("NO OLYMPICS WERE HELD!!!!!!");
+    
+//   } else {
+//   const jsonData=[]
+  
+//   Object.keys(d.Sport).forEach(key => {
+//     jsonData.push({
+//       Sport: d.Sport[key],
+//       Count: +d.Count[key]
+//     });
+//   });
+
+//   // jsonData.sort((a, b) => b.Count - a.Count);
+
+//   const size = d3.scaleLinear()
+//     .domain([0,d3.max(jsonData, d=> d.Count)])
+//     .range([7,50])  // circle will be between 7 and 55 px wide
+
+  
+//   // Initialize the circle: all located at the center of the svg area
+//   var node = svg_1.append("g")
+//     .selectAll("circle")
+//     .data(jsonData)
+//     .join("circle")
+//       .attr("class", "node")
+//       .attr("r", d => size(d.Count))
+//       .attr("cx", width_1 / 2)
+//       .attr("cy", height_1 / 2)
+//       .style("fill", "blue")
+//       .style("fill-opacity", 0.8)
+//       .attr("stroke", "black")
+//       .style("stroke-width", 1)
+//       .on("mouseover", function(event, d) {tip_1.show(event,d);})
+//       .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
+//       .call(d3.drag() // call specific function when circle is dragged
+//            .on("start", dragstarted)
+//            .on("drag", dragged)
+//            .on("end", dragended));
+
+//   // Features of the forces applied to the nodes:
+//   const simulation = d3.forceSimulation()
+//       .force("center", d3.forceCenter().x(width_1 / 2).y(height_1 / 2)) // Attraction to the center of the svg area
+//       .force("charge", d3.forceManyBody().strength(.1)) // Nodes are attracted one each other of value is > 0
+//       .force("collide", d3.forceCollide().strength(.2).radius(function(d){ return (size(d.Count)+3) }).iterations(1)) // Force that avoids circle overlapping
+
+//   // Apply these forces to the nodes and update their positions.
+//   // Once the force algorithm is happy with positions ('alpha' value is low enough), simulations will stop.
+//   simulation
+//       .nodes(jsonData)
+//       .on("tick", function(d){
+//         node
+//             .attr("cx", d => d.x)
+//             .attr("cy", d => d.y)
+//       });
+
+//   // What happens when a circle is dragged?
+//   function dragstarted(event, d) {
+//     if (!event.active) simulation.alphaTarget(.03).restart();
+//     d.fx = d.x;
+//     d.fy = d.y;
+//   }
+//   function dragged(event, d) {
+//     d.fx = event.x;
+//     d.fy = event.y;
+//   }
+//   function dragended(event, d) {
+//     if (!event.active) simulation.alphaTarget(.03);
+//     d.fx = null;
+//     d.fy = null;
+//   }  
+//   } 
+// });
     
 
 var margin = {top: 20, right: 10, bottom: 10, left: 55},

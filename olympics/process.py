@@ -51,6 +51,7 @@ def trigger_pca():
     # print(selected_line)
     generate_map_pca_json()
     generate_barchart_pca_json()
+    generate_pcp_pca_json()
     generate_pie_pca_json()
     return jsonify(countries)
 
@@ -179,6 +180,22 @@ def generate_pcp_json():
     filename = 'final_' + str(selected_season.lower()) + '.csv'
     df = pd.read_csv(filename)
     filtered_df = df[df["Year"] == selected_year]   
+    new_df = filtered_df[['ID', 'Age', 'Weight', 'Height', 'Sex']]
+    json_str = new_df.to_json()
+    
+    response = make_response(json_str)
+    response.headers['Content-Disposition'] = 'attachment; filename=pcp.json'
+    response.headers['Content-Type'] = 'application/json'
+
+    socketio.emit('updated-pcp-json', response.data.decode('utf-8'))
+
+@socketio.on('connect')
+def generate_pcp_pca_json():
+    filename = 'final_' + str(selected_season.lower()) + '.csv'
+    df = pd.read_csv(filename)
+    filtered_df = df[df["Year"] == selected_year]   
+    if len(selected_countries) > 0:
+        filtered_df = filtered_df[filtered_df['NOC'].isin(selected_countries)]
     new_df = filtered_df[['ID', 'Age', 'Weight', 'Height', 'Sex']]
     json_str = new_df.to_json()
     
