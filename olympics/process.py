@@ -20,7 +20,10 @@ selected_countries = []
 @app.route('/trigger-script', methods=['GET'])
 def trigger_script():
     year = json.loads(request.args.get('selectedYear')) 
-    season = json.loads(request.args.get('selectedSeason')) 
+    season = json.loads(request.args.get('selectedSeason'))
+    # countries = json.loads(request.args.get('selectedPcaCountries'))
+    # global selected_countries
+    # selected_countries = countries 
     global selected_year, selected_season
     selected_year = year
     selected_season = season
@@ -396,59 +399,60 @@ def generate_pie_pcp_json():
 @socketio.on('connect')
 def generate_pie_pca_json():
 
-    filename = 'final_' + str(selected_season.lower()) + '.csv'
+    if selected_season != '':   
+        filename = 'final_' + str(selected_season.lower()) + '.csv'
 
-    gold_medals, silver_medals, bronze_medals, no_medals = 0,0,0,0
+        gold_medals, silver_medals, bronze_medals, no_medals = 0,0,0,0
 
-    data = pd.read_csv(filename)
-    year = selected_year
+        data = pd.read_csv(filename)
+        year = selected_year
 
-    year_data = data[data["Year"] == year]
+        year_data = data[data["Year"] == year]
 
-    if len(selected_countries) > 0:
-        year_data = year_data[year_data["NOC"].isin(selected_countries)]
-    
-    nocs = year_data["NOC"].unique()
+        if len(selected_countries) > 0:
+            year_data = year_data[year_data["NOC"].isin(selected_countries)]
+        
+        nocs = year_data["NOC"].unique()
 
-    new_country_data = pd.DataFrame()
-    if not(selected_year == 1916 or selected_year == 1940 or selected_year == 1944):
-        for country in nocs:
+        new_country_data = pd.DataFrame()
+        if not(selected_year == 1916 or selected_year == 1940 or selected_year == 1944):
+            for country in nocs:
 
-            noc_df = year_data[year_data["NOC"] == country]
-            # noc_df = country_data[(country_data['NOC'] == country) & (country_data['Year'] == year)]      
+                noc_df = year_data[year_data["NOC"] == country]
+                # noc_df = country_data[(country_data['NOC'] == country) & (country_data['Year'] == year)]      
 
-            gold_medals += len(noc_df[noc_df['Medal'] == 'Gold'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
-            silver_medals += len(noc_df[noc_df['Medal'] == 'Silver'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
-            bronze_medals += len(noc_df[noc_df['Medal'] == 'Bronze'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
-            no_medals += len(noc_df[noc_df['Medal'].isna()].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+                gold_medals += len(noc_df[noc_df['Medal'] == 'Gold'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+                silver_medals += len(noc_df[noc_df['Medal'] == 'Silver'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+                bronze_medals += len(noc_df[noc_df['Medal'] == 'Bronze'].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
+                no_medals += len(noc_df[noc_df['Medal'].isna()].groupby(['Sport', 'Event']).agg({'Medal': 'count'}))
 
-            # total_medals = gold_medals + silver_medals + bronze_medals
+                # total_medals = gold_medals + silver_medals + bronze_medals
 
-            # if total_medals > 0:
+                # if total_medals > 0:
 
-        data = {
-            "Gold": gold_medals,
-            "Silver": silver_medals,
-            "Bronze": bronze_medals,
-            "No_medal": no_medals
-        }
+            data = {
+                "Gold": gold_medals,
+                "Silver": silver_medals,
+                "Bronze": bronze_medals,
+                "No_medal": no_medals
+            }
 
 
-        # new_country_data = new_country_data.append(data, ignore_index=True)
-    
-        json_str = json.dumps(data)
+            # new_country_data = new_country_data.append(data, ignore_index=True)
+        
+            json_str = json.dumps(data)
 
-        response = make_response(json_str)
-            
-        response.headers['Content-Disposition'] = 'attachment; filename=pie.json'
-        response.headers['Content-Type'] = 'application/json'
+            response = make_response(json_str)
+                
+            response.headers['Content-Disposition'] = 'attachment; filename=pie.json'
+            response.headers['Content-Type'] = 'application/json'
 
-        socketio.emit('updated-pie-json', response.data.decode('utf-8'))
+            socketio.emit('updated-pie-json', response.data.decode('utf-8'))
 
-    else:
-        json_str = json.dumps('')
-        response = make_response(json_str)
-        socketio.emit('updated-pie-json', response.data.decode('utf-8'))
+        else:
+            json_str = json.dumps('')
+            response = make_response(json_str)
+            socketio.emit('updated-pie-json', response.data.decode('utf-8'))
 
 
 

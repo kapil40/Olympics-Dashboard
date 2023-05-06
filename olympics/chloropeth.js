@@ -23,12 +23,14 @@ var season;
 window.onload = function() {
     year = 1896;
     season = "Summer";
+    // var countries = '';
     update_slider(season);
     // const country = '';
     const params = new URLSearchParams();
     // const params_1 = new URLSearchParams();
     params.append("selectedYear", JSON.stringify(year));
     params.append("selectedSeason", JSON.stringify(season));
+    // params.append("selectedPcaCountries", JSON.stringify(countries));
     // params_1.append("selectedCountry", JSON.stringify(country));
     d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
           .then(function(data) {
