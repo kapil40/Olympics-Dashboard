@@ -725,7 +725,7 @@ var tip_pie = d3.tip()
   .attr("class","d3-tip")
   .direction('e')
   .html(function(event,d,i) {
-      return "<span style='color:red'>" + (+d.Count) + "</span>";
+      return "<span style='color:red'>" + (+d.data[1]) + "</span>";
   });
 
 svg_pie.call(tip_pie);  
@@ -771,6 +771,8 @@ socket.on('updated-pie-json', function(jsonString) {
     .attr('d', arcGenerator)
     .attr('fill', function(d){ return(color(d.data[0])) })
     .attr("stroke", "black")
+    .on("mouseover", function(event, d) {tip_pie.show(event,d);})
+    .on("mouseleave", function(event, d) {tip_pie.hide(event,d);})
     .style("stroke-width", "2px")
     .style("opacity", 0.7)
     .transition()
@@ -790,16 +792,42 @@ socket.on('updated-pie-json', function(jsonString) {
 
 
       // Now add the annotation. Use the centroid method to get the best coordinates
-      svg_pie
-        .selectAll('mySlices')
-        .data(data_ready)
-        .join('text')
-        .text(function(d){ return d.data[0]})
-        .attr("transform", function(d) { return `translate(${arcGenerator.centroid(d)})`})
-        .style("text-anchor", "middle")
-        .style("font-size", 12);
+      // svg_pie
+      //   .selectAll('mySlices')
+      //   .data(data_ready)
+      //   .join('text')
+      //   .text(function(d){ return d.data[0]})
+      //   .attr("transform", function(d) { return `translate(${arcGenerator.centroid(d)})`})
+      //   .style("text-anchor", "middle")
+      //   .style("font-size", 12);
+
+    
+    // again rebind for legend
+    var legendG = svg_pie.selectAll(".legend") // note appending itsvg_pie and not svg to make positioning easier
+    .data(data_ready)
+    .enter().append("g")
+    .attr("transform", function(d,i){
+      return "translate(" + (width - 200) + "," + (i * 15 - 80) + ")"; // place each legend on the right and bump each one down 15 pixels
+    })
+    .attr("class", "legend");   
+
+    legendG.append("rect") // make a matching color rect
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("fill", function(d, i) {
+      return color(i);
+    });
+
+    legendG.append("text") // add the text
+    .text(function(d){
+      return d.data[0]
+    })
+    .style("font-size", 12)
+    .attr("y", 10)
+    .attr("x", 11);
 
      }
+
 
 })
 
