@@ -42,22 +42,47 @@ window.onload = function() {
             });
 };
 
-var allGroup = ["Summer", "Winter"];
+// var allGroup = ["Summer", "Winter"];
 
 // add the options to the button
-d3.select(".dropdown")
-  .selectAll('myOptions')
-    .data(allGroup)
-  .enter()
-  .append('option')
-  .text(function (d) { return d; }) // text showed in the menu
-  .attr("value", function (d) { return d; });
+// d3.select(".dropdown")
+//   .selectAll('myOptions')
+//     .data(allGroup)
+//   .enter()
+//   .append('option')
+//   .text(function (d) { return d; }) // text showed in the menu
+//   .attr("value", function (d) { return d; });
 
-d3.select(".dropdown").on("change", function(d){
-    selectedGroup = this.value;
-    season = this.value;
-    countries_list = 1;
-    if(season === "Summer") 
+// d3.select(".dropdown").on("change", function(d){
+//     selectedGroup = this.value;
+//     season = this.value;
+//     countries_list = 1;
+//     if(season === "Summer") 
+//       year = 1896;
+//     else
+//       year = 1924; 
+//     update_slider(season);
+//     const params = new URLSearchParams();
+//     params.append("selectedYear", JSON.stringify(year));
+//     params.append("selectedSeason", JSON.stringify(season));
+//     params.append("selectedPcaCountries", JSON.stringify(countries_list));
+//     // params_1.append("selectedCountry", JSON.stringify(country));
+//     d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
+//           .then(function(data) {
+//               // console.log(data);
+              
+//             }).catch(function(error) {
+//               // console.log(error);
+//             });
+// });
+
+d3.selectAll('input[name="controlHeatmapType"]').on("change", function() {
+  // code to handle change event
+  season = d3.select('input[name="controlHeatmapType"]:checked').node().value;
+  console.log("Selected value: " + season);
+  countries_list = 1;
+
+  if(season === "Summer") 
       year = 1896;
     else
       year = 1924; 
@@ -66,6 +91,7 @@ d3.select(".dropdown").on("change", function(d){
     params.append("selectedYear", JSON.stringify(year));
     params.append("selectedSeason", JSON.stringify(season));
     params.append("selectedPcaCountries", JSON.stringify(countries_list));
+
     // params_1.append("selectedCountry", JSON.stringify(country));
     d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
           .then(function(data) {
