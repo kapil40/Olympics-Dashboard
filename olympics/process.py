@@ -21,9 +21,11 @@ selected_countries = []
 def trigger_script():
     year = json.loads(request.args.get('selectedYear')) 
     season = json.loads(request.args.get('selectedSeason'))
-    # countries = json.loads(request.args.get('selectedPcaCountries'))
-    # global selected_countries
-    # selected_countries = countries 
+    countries = json.loads(request.args.get('selectedPcaCountries'))
+    # print(countries)
+    global selected_countries
+    if countries == 1:
+        selected_countries = [] 
     global selected_year, selected_season
     selected_year = year
     selected_season = season

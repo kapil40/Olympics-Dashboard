@@ -19,18 +19,19 @@ const data4 = data2.concat(data3)
 
 var year;
 var season;
+var countries_list;
 
 window.onload = function() {
     year = 1896;
     season = "Summer";
-    // var countries = '';
+    countries_list = 1;
     update_slider(season);
     // const country = '';
     const params = new URLSearchParams();
     // const params_1 = new URLSearchParams();
     params.append("selectedYear", JSON.stringify(year));
     params.append("selectedSeason", JSON.stringify(season));
-    // params.append("selectedPcaCountries", JSON.stringify(countries));
+    params.append("selectedPcaCountries", JSON.stringify(countries_list));
     // params_1.append("selectedCountry", JSON.stringify(country));
     d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
           .then(function(data) {
@@ -55,6 +56,7 @@ d3.select(".dropdown")
 d3.select(".dropdown").on("change", function(d){
     selectedGroup = this.value;
     season = this.value;
+    countries_list = 1;
     if(season === "Summer") 
       year = 1896;
     else
@@ -63,6 +65,7 @@ d3.select(".dropdown").on("change", function(d){
     const params = new URLSearchParams();
     params.append("selectedYear", JSON.stringify(year));
     params.append("selectedSeason", JSON.stringify(season));
+    params.append("selectedPcaCountries", JSON.stringify(countries_list));
     // params_1.append("selectedCountry", JSON.stringify(country));
     d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
           .then(function(data) {
@@ -88,9 +91,11 @@ const slider = d3.sliderBottom()
   .default(season === 'Summer' ? new Date(1896, 10, 3): new Date(1924, 10, 3))
   .on('end', (val) => {
     year = val.getFullYear();
+    countries_list = 1;
     const params = new URLSearchParams();
     params.append("selectedYear", JSON.stringify(year));
     params.append("selectedSeason", JSON.stringify(season));
+    params.append("selectedPcaCountries", JSON.stringify(countries_list));
     d3.json("http://127.0.0.1:5000/trigger-script" + "?" + params.toString())
           .then(function(data) {
               // console.log(data);
