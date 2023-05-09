@@ -1,4 +1,4 @@
-var width = 1340, height = 45;
+var width = 1300, height = 45;
 const svg = d3.select(".slider").append("svg")
                 .attr("width",width)
                 .attr("height",height);
@@ -191,7 +191,7 @@ socket.on('updated-map-json', function(jsonString) {
             });
       
 var margin_1 = {top: 20, right: 30, bottom: 40, left: 100},
-    width_1 = 760 - margin_1.left - margin_1.right,
+    width_1 = 650 - margin_1.left - margin_1.right,
     height_1 = 350 - margin_1.top - margin_1.bottom;
 
 // append the svg object to the body of the page

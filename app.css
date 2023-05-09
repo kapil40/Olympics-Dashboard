@@ -140,17 +140,28 @@ body {
   background-color: #272527;
 } */
 
+body {
+  background-color:#FFFFE0;
+}
 .top-section {
   display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+  /* box-shadow: 10px 10px 5px lightblue inset; */
   
 }
 
 .bottom-section {
   display: flex; 
+  justify-content: center;
+  /* box-shadow: 10px 10px 5px lightblue inset; */
 }
 
 .slider-section {
   display: flex;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+  cursor: all-scroll;
 }
 .background path {
   fill: none;
@@ -195,10 +206,61 @@ body {
 .d3-geomap .legend-bg {fill:#fff;fill-opacity:.8}
 .d3-geomap .legend-bar{stroke:#333;stroke-width:1px}
 
+.d3-geomap {
+  margin-right: 1rem;
+  box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+-webkit-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+-moz-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+border-radius: 21px 21px 21px 21px;
+-webkit-border-radius: 21px 21px 21px 21px;
+-moz-border-radius: 21px 21px 21px 21px;
+background-color: rgb(232, 220, 220);
+}
 
+#barchart {
+  margin-right: 1rem;
+  box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  border-radius: 21px 21px 21px 21px;
+-webkit-border-radius: 21px 21px 21px 21px;
+-moz-border-radius: 21px 21px 21px 21px;
+background-color: rgb(232, 220, 220);
+}
 
+.pcp {
+  margin-right: 1rem;
+  box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  border-radius: 21px 21px 21px 21px;
+-webkit-border-radius: 21px 21px 21px 21px;
+-moz-border-radius: 21px 21px 21px 21px;
+background-color: rgb(232, 220, 220);
+}
 
+.pca {
+  margin-right: 1rem;
+  box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  border-radius: 21px 21px 21px 21px;
+-webkit-border-radius: 21px 21px 21px 21px;
+-moz-border-radius: 21px 21px 21px 21px;
+background-color: rgb(232, 220, 220);
+}
+.pie {
+  margin-right: 1rem;
+  box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 8px 9px -5px rgba(0,0,0,0.75);
+  border-radius: 21px 21px 21px 21px;
+-webkit-border-radius: 21px 21px 21px 21px;
+-moz-border-radius: 21px 21px 21px 21px;
+background-color: rgb(232, 220, 220);
+}
 
-
-
+.button {
+  color: #000;
+}
  
