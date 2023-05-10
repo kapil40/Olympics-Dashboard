@@ -20,10 +20,12 @@ const data4 = data2.concat(data3)
 var year;
 var season;
 var countries_list;
+var season_copy;
 
 window.onload = function() {
     year = 1896;
     season = "Summer";
+    season_copy = "Summer"
     countries_list = 1;
     update_slider(season);
     // const country = '';
@@ -79,16 +81,17 @@ window.onload = function() {
 d3.selectAll('input[name="controlHeatmapType"]').on("change", function() {
   // code to handle change event
   season = d3.select('input[name="controlHeatmapType"]:checked').node().value;
+  season_copy = season;
   // console.log("Selected value: " + season);
   countries_list = 1;
 
   if(season === "Summer") {
       year = 1896;
-      d3.select("body").style("background-color", "#FFD700");
+      d3.select("body").style("background-color", "#FFF7B3");
   }
     else {
       year = 1924;
-      d3.select("body").style("background-color", "#e0fbfc");
+      d3.select("body").style("background-color", "#87CEEB");
     } 
     update_slider(season);
     const params = new URLSearchParams();
@@ -134,7 +137,6 @@ const slider = d3.sliderBottom()
             });
   });
 
-
 svg.append("g").attr('transform', 'translate(30,10)')
             .call(slider);
 
@@ -143,10 +145,12 @@ svg.append("g").attr('transform', 'translate(30,10)')
 var format = function(d) {
   return d3v5.format('d')(d);
 }
+console.log("season-->",season_copy)
+console.log("season-->",season_copy==="Summer")
 
 var map = d3.choropleth()
 .geofile('./olympics/world.json')
-.colors(d3v5.schemeOrRd[9])
+.colors(season === 'Summer' ? d3v5.schemePurples[9]:d3v5.schemeOrRd[9])
 .column('Count')
 .format(format)
 .translate([330,183])
@@ -418,6 +422,8 @@ var x = d3v3.scale.ordinal().rangePoints([0, width], 1),
     y = {},
     dragging = {};
 
+var color_gender = d3v3.scale.category10();
+
 var line = d3v3.svg.line(),
     axis = d3v3.svg.axis().orient("left"),
     background,
@@ -506,7 +512,7 @@ socket.on('updated-pcp-json', function(jsonString) {
     .selectAll("path")
       .data(olympics)
     .enter().append("path")
-      .style("stroke", "#87CEEB")
+      .style("stroke", function(d) { return color_gender(d.Sex); })
       .attr("d", path_1);
   
   // Add a group element for each dimension.
@@ -710,9 +716,9 @@ socket.on('updated-pca-json', function(jsonString) {
       // .domain(countries) // Replace with your actual array of country names
       // .range(d3.schemeCategory20b); // You can use any predefined color scheme from the library
 
-      var color = d3v5.scaleOrdinal()
-          .domain(countries)
-          .range(d3v5.schemeSet2);
+      // var color = d3v5.scaleOrdinal()
+      //     .domain(countries)
+      //     .range(d3v5.schemeSet2);
 
       // Add dots
       var myCircle = svg_pca.append('g')
@@ -724,7 +730,7 @@ socket.on('updated-pca-json', function(jsonString) {
           .attr("cy", function (d) { return y(d[1]); } )
           .attr("r", 5)
           // .style("fill", "#FF0000")
-          .style("fill", function (d) { return color(countries) } )
+          .style("fill", "#FF0000" )
           .style("opacity", 0.5)
 
       svg_pca.append('g')

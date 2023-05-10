@@ -142,7 +142,7 @@ body {
 
 body {
   /* background-color:#FFFFE0; */
-  background-color: #FFD700;
+  background-color: #FFF7B3;
 }
 .top-section {
   display: flex;
@@ -273,3 +273,11 @@ background-color: white;
 .hidden {
   display: none;
 }
+
+.axis text {
+  fill: black;
+}
+
+/* .axis .tick:focusable {
+  fill: red; /* change the color of the tick text when it's selected */
+/* } */
