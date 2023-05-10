@@ -141,7 +141,8 @@ body {
 } */
 
 body {
-  background-color:#FFFFE0;
+  /* background-color:#FFFFE0; */
+  background-color: #FFD700;
 }
 .top-section {
   display: flex;
@@ -214,7 +215,8 @@ body {
 border-radius: 21px 21px 21px 21px;
 -webkit-border-radius: 21px 21px 21px 21px;
 -moz-border-radius: 21px 21px 21px 21px;
-background-color: rgb(232, 220, 220);
+/* background-color: rgb(232, 220, 220); */
+background-color: white;
 }
 
 #barchart {
@@ -225,7 +227,8 @@ background-color: rgb(232, 220, 220);
   border-radius: 21px 21px 21px 21px;
 -webkit-border-radius: 21px 21px 21px 21px;
 -moz-border-radius: 21px 21px 21px 21px;
-background-color: rgb(232, 220, 220);
+/* background-color: rgb(232, 220, 220); */
+background-color: white;
 }
 
 .pcp {
@@ -236,7 +239,8 @@ background-color: rgb(232, 220, 220);
   border-radius: 21px 21px 21px 21px;
 -webkit-border-radius: 21px 21px 21px 21px;
 -moz-border-radius: 21px 21px 21px 21px;
-background-color: rgb(232, 220, 220);
+/* background-color: rgb(232, 220, 220); */
+background-color:white;
 }
 
 .pca {
@@ -247,7 +251,8 @@ background-color: rgb(232, 220, 220);
   border-radius: 21px 21px 21px 21px;
 -webkit-border-radius: 21px 21px 21px 21px;
 -moz-border-radius: 21px 21px 21px 21px;
-background-color: rgb(232, 220, 220);
+/* background-color: rgb(232, 220, 220); */
+background-color: white;
 }
 .pie {
   margin-right: 1rem;
@@ -257,10 +262,14 @@ background-color: rgb(232, 220, 220);
   border-radius: 21px 21px 21px 21px;
 -webkit-border-radius: 21px 21px 21px 21px;
 -moz-border-radius: 21px 21px 21px 21px;
-background-color: rgb(232, 220, 220);
+/* background-color: rgb(232, 220, 220); */
+background-color: white;
 }
 
 .button {
   color: #000;
 }
  
+.hidden {
+  display: none;
+}

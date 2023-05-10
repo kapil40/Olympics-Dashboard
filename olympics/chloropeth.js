@@ -79,13 +79,17 @@ window.onload = function() {
 d3.selectAll('input[name="controlHeatmapType"]').on("change", function() {
   // code to handle change event
   season = d3.select('input[name="controlHeatmapType"]:checked').node().value;
-  console.log("Selected value: " + season);
+  // console.log("Selected value: " + season);
   countries_list = 1;
 
-  if(season === "Summer") 
+  if(season === "Summer") {
       year = 1896;
-    else
-      year = 1924; 
+      d3.select("body").style("background-color", "#FFD700");
+  }
+    else {
+      year = 1924;
+      d3.select("body").style("background-color", "#e0fbfc");
+    } 
     update_slider(season);
     const params = new URLSearchParams();
     params.append("selectedYear", JSON.stringify(year));
@@ -142,11 +146,11 @@ var format = function(d) {
 
 var map = d3.choropleth()
 .geofile('./olympics/world.json')
-.colors(d3v5.schemeYlGnBu[9])
+.colors(d3v5.schemeOrRd[9])
 .column('Count')
 .format(format)
-.translate([260,150])
-.width(500)
+.translate([330,183])
+.width(700)
 .height(350)
 .legend(true)
 .unitId('iso3');
@@ -228,12 +232,11 @@ socket.on('updated-barchart-json', function(jsonString) {
       // const isEmpty = Object.keys(d.Sport).every(key => !d.Sport[key]) && Object.values(d.Count).every(count => count === 0);
       if(year == 1916 || year == 1940 || year == 1944) {
           svg_1.append("text")
-          .attr("x", width_1 / 2  + 170)
-          .attr("y", -margin_1.top / 2 + 200)
+          .attr("x", width_1 / 2 )
+          .attr("y", -margin_1.top / 2 + 180)
           .attr("text-anchor", "middle")
           .style("font-size", "24px")
-          .text("NO OLYMPICS WERE HELD!!!!!!");
-        
+          .text("NO OLYMPICS WERE HELD!!!!!!");        
       } else {
       const jsonData=[]
       
@@ -245,7 +248,7 @@ socket.on('updated-barchart-json', function(jsonString) {
       });
 
       jsonData.sort((a, b) => b.Count - a.Count);
-
+      console.log();
         const x = d3.scaleLinear()
         .domain([0,d3.max(jsonData, d=> d.Count)])
         .range([ 0, width_1]);
@@ -267,19 +270,52 @@ socket.on('updated-barchart-json', function(jsonString) {
           .call(d3.axisLeft(y))
     
       //Bars
-      svg_1.selectAll("myRect")
-      .data(jsonData)
-      .join("rect")
-      .attr("x", 0)
-      .attr("y", d => y(d.Sport) + 5)
-      .attr("width", 0) // Set initial width to 0 for transition
-      .attr("height", y.bandwidth() / 2)
-      .on("mouseover", function(event, d) {tip_1.show(event,d);})
-      .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
-      .attr("fill", "#69b3a2")
-      .transition() // Add transition effect
-      .duration(1000) // Set duration for transition
-      .attr("width", d => x(+d.Count)); 
+      if(jsonData.length == 1) {
+        svg_1.selectAll("myRect")
+        .data(jsonData)
+        .join("rect")
+        .attr("x", 0)
+        .attr("y", d => y(d.Sport) + 40)
+        .attr("width", 0) // Set initial width to 0 for transition
+        .attr("height", y.bandwidth() / 2)
+        .on("mouseover", function(event, d) {tip_1.show(event,d);})
+        .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
+        .attr("fill", "#69b3a2")
+        .transition() // Add transition effect
+        .duration(1000) // Set duration for transition
+        .attr("width", d => x(+d.Count));
+      }
+      else if(jsonData.length >=2 && jsonData.length <=4) {
+        svg_1.selectAll("myRect")
+        .data(jsonData)
+        .join("rect")
+        .attr("x", 0)
+        .attr("y", d => y(d.Sport) + 15)
+        .attr("width", 0) // Set initial width to 0 for transition
+        .attr("height", y.bandwidth() / 2)
+        .on("mouseover", function(event, d) {tip_1.show(event,d);})
+        .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
+        .attr("fill", "#69b3a2")
+        .transition() // Add transition effect
+        .duration(1000) // Set duration for transition
+        .attr("width", d => x(+d.Count));
+
+      } else {
+
+        svg_1.selectAll("myRect")
+        .data(jsonData)
+        .join("rect")
+        .attr("x", 0)
+        .attr("y", d => y(d.Sport) + 5)
+        .attr("width", 0) // Set initial width to 0 for transition
+        .attr("height", y.bandwidth() / 2)
+        .on("mouseover", function(event, d) {tip_1.show(event,d);})
+        .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
+        .attr("fill", "#69b3a2")
+        .transition() // Add transition effect
+        .duration(1000) // Set duration for transition
+        .attr("width", d => x(+d.Count)); 
+      }
 
       svg_1.append("text")
         .attr("x", width_1/2 - 70)
@@ -399,13 +435,25 @@ socket.on('updated-pcp-json', function(jsonString) {
   svg_2.selectAll("*").remove();
   var d = JSON.parse(jsonString);  
   if(year == 1916 || year == 1940 || year == 1944) {
-    svg_2.append("text")
-          .attr("x", width_1 / 2 )
-          .attr("y", -margin_1.top / 2 + 200)
-          .attr("text-anchor", "middle")
-          .style("font-size", "24px")
-          .text("");
+    // svg_2.append("text")
+    //       .attr("x", width_1 / 2 )
+    //       .attr("y", -margin_1.top / 2 + 200)
+    //       .attr("text-anchor", "middle")
+    //       .style("font-size", "24px")
+    //       .text("");
+    
+  var pcp = document.querySelectorAll('.pcp');
+  for (var i = 0; i < pcp.length; i++) {
+      pcp[i].classList.add('hidden');
+  }
   } else {
+  
+    var pcp = document.querySelectorAll('.pcp');
+    for (var i = 0; i < pcp.length; i++) {
+      if (pcp[i].classList.contains('hidden')) {
+        pcp[i].classList.remove('hidden');
+      } 
+    } 
   const olympics=[]
       
   Object.keys(d.Age).forEach(key => {
@@ -602,14 +650,27 @@ socket.on('updated-pca-json', function(jsonString) {
       svg_pca.selectAll("*").remove();
       // var json_data = JSON.parse('{{ data|safe }}');
       if(year == 1916 || year == 1940 || year == 1944) {
-        svg_pca.append("text")
-        .attr("x", width / 2  + 170)
-        .attr("y", -margin_pca.top / 2 + 200)
-        .attr("text-anchor", "middle")
-        .style("font-size", "24px")
-        .text("NO OLYMPICS WERE HELD!!!!!!");
+        // svg_pca.append("text")
+        // .attr("x", width / 2  + 170)
+        // .attr("y", -margin_pca.top / 2 + 200)
+        // .attr("text-anchor", "middle")
+        // .style("font-size", "24px")
+        // .text("NO OLYMPICS WERE HELD!!!!!!");
+
+        var pca = document.querySelectorAll('.pca');
+        for (var i = 0; i < pca.length; i++) {
+            pca[i].classList.add('hidden');
+        }
       
     } else {
+
+      var pca = document.querySelectorAll('.pca');
+      for (var i = 0; i < pca.length; i++) {
+        if (pca[i].classList.contains('hidden')) {
+          pca[i].classList.remove('hidden');
+        } 
+      }
+
       var json_data = JSON.parse(jsonString);
       let pca_data = json_data.pca_results;
       let countries = json_data.countries;
@@ -750,7 +811,7 @@ const svg_pie = d3.select(".pie")
     .attr("width", width_1 + margin_pie.left + margin_pie.right)
     .attr("height", height_1 + margin_pie.top + margin_pie.bottom)
   .append("g")
-    .attr("transform", `translate(${margin_pie.left + 125}, ${margin_pie.top + 90})`);
+    .attr("transform", `translate(${margin_pie.left + 125}, ${margin_pie.top + 130})`);
 
 var tip_pie = d3.tip()
   .attr("class","d3-tip")
@@ -765,16 +826,29 @@ socket.on('updated-pie-json', function(jsonString) {
 
   svg_pie.selectAll("*").remove();
       if(year == 1916 || year == 1940 || year == 1944) {
-        svg_pie.append("text")
-        .attr("x", width_1 / 2  + 170)
-        .attr("y", -margin_pie.top / 2 + 200)
-        .attr("text-anchor", "middle")
-        .style("font-size", "24px")
-        .text("");
+        // svg_pie.append("text")
+        // .attr("x", width_1 / 2  + 170)
+        // .attr("y", -margin_pie.top / 2 + 200)
+        // .attr("text-anchor", "middle")
+        // .style("font-size", "24px")
+        // .text("");
+        var pie_chart = document.querySelectorAll('.pie');
+        for (var i = 0; i < pie_chart.length; i++) {
+          
+            pie_chart[i].classList.add('hidden');
+          
+        }
 
       }
       
      else {
+
+      var pie_chart = document.querySelectorAll('.pie');
+      for (var i = 0; i < pie_chart.length; i++) {
+        if (pie_chart[i].classList.contains('hidden')) {
+          pie_chart[i].classList.remove('hidden');
+        } 
+      }
       var data = JSON.parse(jsonString);
 
       // const color = d3.scaleOrdinal()
@@ -838,7 +912,7 @@ socket.on('updated-pie-json', function(jsonString) {
     .data(data_ready)
     .enter().append("g")
     .attr("transform", function(d,i){
-      return "translate(" + (width - 200) + "," + (i * 15 - 80) + ")"; // place each legend on the right and bump each one down 15 pixels
+      return "translate(" + (width - 200) + "," + (i * 15 - 130) + ")"; // place each legend on the right and bump each one down 15 pixels
     })
     .attr("class", "legend");   
 
