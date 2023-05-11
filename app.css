@@ -148,14 +148,58 @@ body {
   display: flex;
   justify-content: center;
   margin-bottom: 3rem;
+  position: relative;
+  margin-bottom: 3rem;
   /* box-shadow: 10px 10px 5px lightblue inset; */
   
+}
+
+.map-title {
+  position: absolute;
+  top: 0;
+  left: 25%;
+  transform: translateX(-50%);
+  margin-top: -1.5rem; /* Adjust as needed */
+}
+
+.bar-title {
+  position: absolute;
+  top: 0;
+  left: 75%;
+  transform: translateX(-50%);
+  margin-top: -1.5rem; /* Adjust as needed */
 }
 
 .bottom-section {
   display: flex; 
   justify-content: center;
+  position: relative;
+  margin-bottom: 3rem;
   /* box-shadow: 10px 10px 5px lightblue inset; */
+}
+
+.pcp-title {
+  position: absolute;
+  top: 0;
+  left: 19%;
+  transform: translateX(-50%);
+  margin-top: -1.5rem; /* Adjust as needed */
+}
+
+.pca-title {
+  position: absolute;
+  top: 0;
+  left: 49%;
+  transform: translateX(-50%);
+  margin-top: -1.5rem; /* Adjust as needed */
+}
+
+.pie-title {
+  position: absolute;
+  top: 0;
+  left: 80%;
+  transform: translateX(-50%);
+  margin-top: -1.5rem; /* Adjust as needed */
 }
 
 .slider-section {
@@ -275,6 +319,10 @@ background-color: white;
 }
 
 .axis text {
+  fill: #353935;
+}
+
+.parameter-value text {
   fill: black;
 }
 

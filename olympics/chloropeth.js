@@ -145,12 +145,12 @@ svg.append("g").attr('transform', 'translate(30,10)')
 var format = function(d) {
   return d3v5.format('d')(d);
 }
-console.log("season-->",season_copy)
-console.log("season-->",season_copy==="Summer")
+// console.log("season-->",season_copy)
+// console.log("season-->",season_copy==="Summer")
 
 var map = d3.choropleth()
 .geofile('./olympics/world.json')
-.colors(season === 'Summer' ? d3v5.schemePurples[9]:d3v5.schemeOrRd[9])
+.colors(season === 'Summer' ? d3v5.schemePurples[9]:d3v5.schemeReds[9])
 .column('Count')
 .format(format)
 .translate([330,183])
@@ -179,6 +179,10 @@ socket.on('updated-map-json', function(jsonString) {
                 .attr("text-anchor", "middle")
                 .style("font-size", "24px")
                 .text("NO OLYMPICS WERE HELD!!!!!!");
+
+                // d3v5.select("h5.map-title").classed("map-title", false); 
+                // d3v5.select('.map-title').remove();     
+                d3v5.selectAll('.map-title').text("");
               } else {
 
               Object.keys(d.iso3).forEach(key => {
@@ -192,6 +196,13 @@ socket.on('updated-map-json', function(jsonString) {
                   .insert('div', '#barchart')
                   .attr('class', 'd3-geomap')
                   .attr('id', 'geomap');
+
+             d3v5.select('.top-section')
+                  .insert('h5',':first-child')
+                  .attr('class', 'map-title')
+                  .text('All Participants from each country');     
+            // d3v5.select('.map-title')
+            // .text('Choropleth Map');     
 
               map.draw(newSelection.datum(jsonData));}
               // var selection = d3v5.select('#geomap').datum(jsonData);
@@ -240,7 +251,11 @@ socket.on('updated-barchart-json', function(jsonString) {
           .attr("y", -margin_1.top / 2 + 180)
           .attr("text-anchor", "middle")
           .style("font-size", "24px")
-          .text("NO OLYMPICS WERE HELD!!!!!!");        
+          .text("NO OLYMPICS WERE HELD!!!!!!");    
+          
+          // d3.select("h5.bar-title").classed("bar-title", false);
+          // d3.select('.bar-title').remove(); 
+          d3.selectAll('.bar-title').text("");  
       } else {
       const jsonData=[]
       
@@ -271,7 +286,15 @@ socket.on('updated-barchart-json', function(jsonString) {
           .padding(.1);
         
           svg_1.append("g")
-          .call(d3.axisLeft(y))
+          .call(d3.axisLeft(y));
+
+          d3.select('.top-section')
+          .insert('h5',':first-child')
+          .attr('class', 'bar-title')
+          .text('Top Sporting Events');     
+          // d3v5.select('.bar-title')
+          //   .text('Chart');     
+
     
       //Bars
       if(jsonData.length == 1) {
@@ -284,7 +307,7 @@ socket.on('updated-barchart-json', function(jsonString) {
         .attr("height", y.bandwidth() / 2)
         .on("mouseover", function(event, d) {tip_1.show(event,d);})
         .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
-        .attr("fill", "#69b3a2")
+        .attr("fill", "darkblue")
         .transition() // Add transition effect
         .duration(1000) // Set duration for transition
         .attr("width", d => x(+d.Count));
@@ -299,7 +322,7 @@ socket.on('updated-barchart-json', function(jsonString) {
         .attr("height", y.bandwidth() / 2)
         .on("mouseover", function(event, d) {tip_1.show(event,d);})
         .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
-        .attr("fill", "#69b3a2")
+        .attr("fill", "darkblue")
         .transition() // Add transition effect
         .duration(1000) // Set duration for transition
         .attr("width", d => x(+d.Count));
@@ -315,7 +338,7 @@ socket.on('updated-barchart-json', function(jsonString) {
         .attr("height", y.bandwidth() / 2)
         .on("mouseover", function(event, d) {tip_1.show(event,d);})
         .on("mouseleave", function(event, d) {tip_1.hide(event,d);})
-        .attr("fill", "#69b3a2")
+        .attr("fill", "darkblue")
         .transition() // Add transition effect
         .duration(1000) // Set duration for transition
         .attr("width", d => x(+d.Count)); 
@@ -452,6 +475,9 @@ socket.on('updated-pcp-json', function(jsonString) {
   for (var i = 0; i < pcp.length; i++) {
       pcp[i].classList.add('hidden');
   }
+  // d3v3.select("h5.pcp-title").classed("pcp-title", false);
+  // d3v3.select('.pcp-title').remove();
+  d3v3.selectAll('.pcp-title').text("");
   } else {
   
     var pcp = document.querySelectorAll('.pcp');
@@ -472,7 +498,13 @@ socket.on('updated-pcp-json', function(jsonString) {
     });
   });
 
-  
+  // d3v3.select('.pcp-title')
+  // .text('PCP'); 
+
+  d3v3.select('.bottom-section')
+          .insert('h5',':first-child')
+          .attr('class', 'pcp-title')
+          .text('Physical Attributes of Athletes'); 
 
   dimensions = d3v3.keys(olympics[0]).filter(function(d) { return d !== "ID"; });  
   dimensions.forEach(function(attr) {
@@ -667,7 +699,9 @@ socket.on('updated-pca-json', function(jsonString) {
         for (var i = 0; i < pca.length; i++) {
             pca[i].classList.add('hidden');
         }
-      
+        // d3v5.select("h5.pca-title").classed("pca-title", false);
+          //  d3v5.select('.pca-title').remove();
+          d3v5.selectAll('.pca-title').text("");
     } else {
 
       var pca = document.querySelectorAll('.pca');
@@ -733,6 +767,13 @@ socket.on('updated-pca-json', function(jsonString) {
           .style("fill", "#FF0000" )
           .style("opacity", 0.5)
 
+      d3v5.select('.bottom-section')
+          .insert('h5',':first-child')
+          .attr('class', 'pca-title')
+          .text('Performance of the Top Countries');     
+
+      // d3v5.select('.pca-title')
+      // .text('PCA'); 
       svg_pca.append('g')
       .selectAll("text")
       .data(data)
@@ -744,7 +785,13 @@ socket.on('updated-pca-json', function(jsonString) {
           .attr("font-size", "6.5px") // Set the font size
           .attr("fill", "black"); // Set the text color
 
-
+    svg_pca.append("text")
+          .attr("transform",
+                "translate(" + (width/2) + " ," +
+                              (height/2) + ")")
+          // .style("text-anchor", "middle")
+          .attr("font-size", "15px")
+          .text("Dimension 1");
       // Add brushing
       svg_pca
           .call( d3v5.brush()                 // Add the brush feature using the d3.brush function
@@ -817,7 +864,7 @@ const svg_pie = d3.select(".pie")
     .attr("width", width_1 + margin_pie.left + margin_pie.right)
     .attr("height", height_1 + margin_pie.top + margin_pie.bottom)
   .append("g")
-    .attr("transform", `translate(${margin_pie.left + 125}, ${margin_pie.top + 130})`);
+    .attr("transform", `translate(${margin_pie.left + 145}, ${margin_pie.top + 135})`);
 
 var tip_pie = d3.tip()
   .attr("class","d3-tip")
@@ -845,10 +892,16 @@ socket.on('updated-pie-json', function(jsonString) {
           
         }
 
+        // d3.select("h5.pie-title").classed("pie-title", false);
+        // d3.select('.pie-title').remove();
+        d3.selectAll('.pie-title').text("");
       }
       
      else {
-
+      d3.select('.bottom-section')
+      .insert('h5',':first-child')
+      .attr('class', 'pie-title')
+      .text('Medal Distribution');
       var pie_chart = document.querySelectorAll('.pie');
       for (var i = 0; i < pie_chart.length; i++) {
         if (pie_chart[i].classList.contains('hidden')) {
@@ -901,7 +954,9 @@ socket.on('updated-pie-json', function(jsonString) {
       })
       .attr('fill', function(d){ return(color(d.data[0])) });
 
+     
 
+      
       // Now add the annotation. Use the centroid method to get the best coordinates
       // svg_pie
       //   .selectAll('mySlices')
@@ -918,7 +973,7 @@ socket.on('updated-pie-json', function(jsonString) {
     .data(data_ready)
     .enter().append("g")
     .attr("transform", function(d,i){
-      return "translate(" + (width - 200) + "," + (i * 15 - 130) + ")"; // place each legend on the right and bump each one down 15 pixels
+      return "translate(" + (width - 220) + "," + (i * 15 - 130) + ")"; // place each legend on the right and bump each one down 15 pixels
     })
     .attr("class", "legend");   
 
@@ -931,7 +986,7 @@ socket.on('updated-pie-json', function(jsonString) {
 
     legendG.append("text") // add the text
     .text(function(d){
-      return d.data[0]
+      return d.data[0] === "No_medal" ? "Rest of athletes" : d.data[0];
     })
     .style("font-size", 12)
     .attr("y", 10)
