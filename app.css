@@ -321,9 +321,14 @@ background-color: white;
 .axis text {
   fill: #353935;
 }
+.tick text {
+fill: black;
+font-weight: bold;
+}
 
 .parameter-value text {
   fill: black;
+  font-weight: bolder;
 }
 
 /* .axis .tick:focusable {

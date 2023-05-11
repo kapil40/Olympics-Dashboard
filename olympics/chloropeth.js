@@ -268,7 +268,6 @@ socket.on('updated-barchart-json', function(jsonString) {
       });
 
       jsonData.sort((a, b) => b.Count - a.Count);
-      console.log();
         const x = d3.scaleLinear()
         .domain([0,d3.max(jsonData, d=> d.Count)])
         .range([ 0, width_1]);
@@ -592,7 +591,7 @@ socket.on('updated-pcp-json', function(jsonString) {
             .attr("font-weight", "bold")
             .attr("font-size", "10px")
             .attr("y", -9)
-            .text(function(d) { return d; });
+            .text(function(d) { return d=="Height"?"Height (cm)": d=="Weight"?"Weight (kg)" : d; });
 
 
   // Add and store a brush for each axis.
@@ -763,7 +762,7 @@ socket.on('updated-pca-json', function(jsonString) {
           .data(data)
           .enter()
           .append("circle")
-          .attr("cx", function (d) {  return x(d[0]); } )
+          .attr("cx", function (d) { return x(d[0]); } )
           .attr("cy", function (d) { return y(d[1]); } )
           .attr("r", 5)
           // .style("fill", "#FF0000")
@@ -786,7 +785,7 @@ socket.on('updated-pca-json', function(jsonString) {
           .attr("x", function (d) { return x(d[0]) + 8; }) // Adjust the x position to add some padding
           .attr("y", function (d) { return y(d[1]) + 4; }) // Adjust the y position to add some padding
           .text(function(d, i) { return country_names[i]; }) // Set the text content to the country name
-          .attr("font-size", "6.5px") // Set the font size
+          .attr("font-size", "6px") // Set the font size
           .attr("fill", "black"); // Set the text color
 
     svg_pca.append("text")
@@ -833,7 +832,6 @@ socket.on('updated-pca-json', function(jsonString) {
           if (isBrushed_pca) {
             brushedData.add(country_names[i]); // push the brushed data into the array
           }
-          console.log(brushedData)
           return isBrushed_pca;
         });
       }
