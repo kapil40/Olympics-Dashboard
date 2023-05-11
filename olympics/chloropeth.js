@@ -788,10 +788,21 @@ socket.on('updated-pca-json', function(jsonString) {
     svg_pca.append("text")
           .attr("transform",
                 "translate(" + (width/2) + " ," +
-                              (height/2) + ")")
-          // .style("text-anchor", "middle")
-          .attr("font-size", "15px")
+                              (height/2 + 150) + ")")
+          .style("text-anchor", "middle")
+          .attr("font-size", "12px")
+          .attr("fill", "black")
           .text("Dimension 1");
+
+    svg_pca.append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 0 - margin.left + 7)
+          .attr("x",0 - (height / 2))
+          .attr("dy", "1em")
+          .style("text-anchor", "middle")
+          .attr("font-size", "12px")
+          .attr("fill", "black")
+          .text("Dimension 2");
       // Add brushing
       svg_pca
           .call( d3v5.brush()                 // Add the brush feature using the d3.brush function
