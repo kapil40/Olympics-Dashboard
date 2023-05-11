@@ -147,9 +147,9 @@ body {
 .top-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   position: relative;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   /* box-shadow: 10px 10px 5px lightblue inset; */
   
 }
@@ -174,7 +174,7 @@ body {
   display: flex; 
   justify-content: center;
   position: relative;
-  margin-bottom: 3rem;
+  /* margin-bottom: 2rem; */
   /* box-shadow: 10px 10px 5px lightblue inset; */
 }
 
